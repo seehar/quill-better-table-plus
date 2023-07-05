@@ -1,6 +1,6 @@
-import QuillBetterTable from 'src/quill-better-table.js'
+import QuillBetterTable from 'src/quill-better-table-plus.js'
 // import better-table styles file
-import 'src/assets/quill-better-table.scss'
+import 'src/assets/quill-better-table-plus.scss'
 
 Quill.register({
   'modules/better-table': QuillBetterTable

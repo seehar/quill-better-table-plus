@@ -9,13 +9,13 @@ module.exports = (env, argv) => {
 
   if (env && env.minimize) {
     entry = {
-      'quill-better-table.min.js': ['./src/quill-better-table.js']
+      'quill-better-table-plus.min.js': ['./src/quill-better-table-plus.js']
     }
     minimize = true
   } else {
     entry = {
-      'quill-better-table.js': ['./src/quill-better-table.js'],
-      'quill-better-table': './src/assets/quill-better-table.scss',
+      'quill-better-table-plus.js': ['./src/quill-better-table-plus.js'],
+      'quill-better-table-plus': './src/assets/quill-better-table-plus.scss',
       'demo/demo1.js': './demo/js/demo1.js'
     }
     minimize = false

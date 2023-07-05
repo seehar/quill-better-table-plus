@@ -1,8 +1,8 @@
 {
-  "name": "quill-better-table",
-  "version": "1.2.10",
+  "name": "quill-better-table-plus",
+  "version": "0.1.0",
   "description": "Module for better table in Quill, more useful features are supported.",
-  "main": "dist/quill-better-table.js",
+  "main": "dist/quill-better-table-plus.js",
   "scripts": {
     "dev": "webpack-dev-server --config webpack.config.js --mode=development",
     "build": "webpack --config webpack.config.js --mode=production --env.minimize; webpack --config webpack.config.js --mode=production; rm dist/quill-better-table;",
