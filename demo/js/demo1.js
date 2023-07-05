@@ -45,4 +45,39 @@ window.onload = () => {
     .onclick = () => {
       console.log(quill.getContents())
     }
+
+  document.body.querySelector('#insert-column-right')
+    .onclick = () => {
+    tableModule.insertColumnRight()
+  }
+
+  document.body.querySelector('#insert-column-left')
+    .onclick = () => {
+    tableModule.insertColumnLeft()
+  }
+
+  document.body.querySelector('#insert-row-above')
+    .onclick = () => {
+    tableModule.insertRowAbove()
+  }
+
+  document.body.querySelector('#insert-row-below')
+    .onclick = () => {
+    tableModule.insertRowBelow()
+  }
+
+  document.body.querySelector('#delete-column')
+    .onclick = () => {
+    tableModule.deleteColumn()
+  }
+
+  document.body.querySelector('#delete-row')
+    .onclick = () => {
+    tableModule.deleteRow()
+  }
+
+  document.body.querySelector('#delete-table')
+    .onclick = () => {
+    tableModule.deleteTable()
+  }
 }

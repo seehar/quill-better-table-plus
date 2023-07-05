@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/soccerloway/quill-better-table.git"
+    "url": "git+https://github.com/seehar/quill-better-table-plus.git"
   },
   "keywords": [
     "quill",
@@ -19,12 +19,12 @@
     "multiline",
     "quilltable"
   ],
-  "author": "soccerloway",
+  "author": "seehar",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/soccerloway/quill-better-table/issues"
+    "url": "https://github.com/seehar/quill-better-table-plus/issues"
   },
-  "homepage": "https://github.com/soccerloway/quill-better-table#readme",
+  "homepage": "https://github.com/seehar/quill-better-table-plus#readme",
   "dependencies": {},
   "devDependencies": {
     "quill": "^2.0.0-dev.3",

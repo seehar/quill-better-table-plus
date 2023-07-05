@@ -11,10 +11,11 @@ import operationIcon6 from '../assets/icons/icon_operation_6.svg'
 import operationIcon7 from '../assets/icons/icon_operation_7.svg'
 import operationIcon8 from '../assets/icons/icon_operation_8.svg'
 import operationIcon9 from '../assets/icons/icon_operation_9.svg'
+import {getColToolCellIndexByBoundary, getColToolCellIndexesByBoundary} from "src/utils/table-util";
+import {ERROR_LIMIT} from "src/contants";
 
 const MENU_MIN_HEIHGT = 150
 const MENU_WIDTH = 200
-const ERROR_LIMIT = 5
 const DEFAULT_CELL_COLORS = ['white', 'red', 'yellow', 'blue']
 const DEFAULT_COLOR_SUBTITLE = 'Background Colors'
 
@@ -385,27 +386,4 @@ export default class TableOperationMenu {
     node.addEventListener('click', handler.bind(this), false)
     return node
   }
-}
-
-function getColToolCellIndexByBoundary (cells, boundary, conditionFn, container) {
-  return cells.reduce((findIndex, cell) => {
-    let cellRect = getRelativeRect(cell.getBoundingClientRect(), container)
-    if (conditionFn(cellRect, boundary)) {
-      findIndex = cells.indexOf(cell)
-    }
-    return findIndex
-  }, false)
-}
-
-function getColToolCellIndexesByBoundary (cells, boundary, conditionFn, container) {
-  return cells.reduce((findIndexes, cell) => {
-    let cellRect = getRelativeRect(
-      cell.getBoundingClientRect(),
-      container
-    )
-    if (conditionFn(cellRect, boundary)) {
-      findIndexes.push(cells.indexOf(cell))
-    }
-    return findIndexes
-  }, [])
 }

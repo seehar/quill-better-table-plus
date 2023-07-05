@@ -27,6 +27,8 @@ import {
   rowId,
   cellId
 } from './formats/table';
+import {getColToolCellIndexByBoundary, getColToolCellIndexesByBoundary} from "src/utils/table-util";
+import {ERROR_LIMIT} from "src/contants";
 
 class BetterTable extends Module {
   static register() {
@@ -201,6 +203,111 @@ class BetterTable extends Module {
 
     this.quill.updateContents(delta, Quill.sources.USER)
     this.quill.setSelection(range.index + columns + 1, Quill.sources.API)
+  }
+
+  tableInsertColumn(columnType) {
+
+    const tableContainer = Quill.find(this.table)
+    const tableSelection = this.tableSelection;
+    const tableColumnTool = this.columnTool;
+    const columnToolCells = tableColumnTool.colToolCells();
+
+    let colIndex = getColToolCellIndexByBoundary(
+      columnToolCells,
+      tableSelection.boundary,
+      (cellRect, boundary) => {
+        return Math.abs(cellRect.x + cellRect.width - boundary.x1) <= ERROR_LIMIT;
+      },
+      tableSelection.quill.root.parentNode
+    );
+    const newColumn = tableContainer.insertColumn(
+      tableSelection.boundary,
+      colIndex,
+      columnType === "right",
+      tableSelection.quill.root.parentNode
+    );
+
+    tableColumnTool.updateToolCells();
+    tableSelection.quill.update(Quill.sources.USER);
+    tableSelection.quill.setSelection(tableSelection.quill.getIndex(newColumn[0]), 0, Quill.sources.SILENT);
+    tableSelection.setSelection(
+      newColumn[0].domNode.getBoundingClientRect(),
+      newColumn[0].domNode.getBoundingClientRect()
+    );
+  }
+
+  insertColumnLeft() {
+    this.tableInsertColumn("left");
+  }
+
+  insertColumnRight() {
+    this.tableInsertColumn("right");
+  }
+
+  tableInsertRow(rowType) {
+    const tableContainer = Quill.find(this.table);
+    const tableSelection = this.tableSelection;
+
+    const affectedCells = tableContainer.insertRow(
+      tableSelection.boundary,
+      rowType === "below",
+      tableSelection.quill.root.parentNode
+    );
+    tableSelection.quill.update(Quill.sources.USER);
+    tableSelection.quill.setSelection(tableSelection.quill.getIndex(affectedCells[0]), 0, Quill.sources.SILENT);
+    tableSelection.setSelection(
+      affectedCells[0].domNode.getBoundingClientRect(),
+      affectedCells[0].domNode.getBoundingClientRect()
+    );
+  }
+
+  insertRowAbove() {
+    this.tableInsertRow("above");
+  }
+
+  insertRowBelow() {
+    this.tableInsertRow("below");
+  }
+
+  deleteRow() {
+    const tableContainer = Quill.find(this.table);
+    const tableSelection = this.tableSelection;
+
+    tableContainer.deleteRow(tableSelection.boundary, tableSelection.quill.root.parentNode);
+    tableSelection.quill.update(Quill.sources.USER);
+    tableSelection.clearSelection();
+  }
+
+  deleteColumn() {
+    const tableContainer = Quill.find(this.table);
+    const tableSelection = this.tableSelection;
+    const tableColumnTool = this.columnTool;
+    const columnToolCells = tableColumnTool.colToolCells();
+
+    let colIndexes = getColToolCellIndexesByBoundary(
+      columnToolCells,
+      tableSelection.boundary,
+      (cellRect, boundary) => {
+        return cellRect.x + ERROR_LIMIT > boundary.x && cellRect.x + cellRect.width - ERROR_LIMIT < boundary.x1;
+      },
+      tableSelection.quill.root.parentNode
+    );
+
+    let isDeleteTable = tableContainer.deleteColumns(
+      tableSelection.boundary,
+      colIndexes,
+      tableSelection.quill.root.parentNode
+    );
+    if (!isDeleteTable) {
+      tableColumnTool.updateToolCells();
+      tableSelection.quill.update(Quill.sources.USER);
+      tableSelection.clearSelection();
+    }
+  }
+
+  deleteTable() {
+    const tableContainer = Quill.find(this.table);
+    tableContainer.tableDestroy();
   }
 
   showTableTools (table, quill, options) {
