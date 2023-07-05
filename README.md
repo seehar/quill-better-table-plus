@@ -63,7 +63,7 @@ Since I use webpack externals to bundle, you must expose `Quill` to window objec
 
 # Installation
 ```
-npm install quill-better-table
+npm install quill-better-table-plus
 ```
 
 # Usage
@@ -196,7 +196,7 @@ Background colors is optional, the default is hidden. If you need this feature, 
 ```
 
 # Community
-Send me an email(<a href="mailto: lw54760187@hotmail.com">lw54760187@hotmail.com</a>) or Contribute on [Issues](https://github.com/seehar/quill-better-table-plus/issues), I glad to hear your suggestion.
+Contribute on [Issues](https://github.com/seehar/quill-better-table-plus/issues), I glad to hear your suggestion.
 
 # License
 [MIT License](https://rmm5t.mit-license.org/)
