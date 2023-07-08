@@ -1,15 +1,10 @@
 import Quill from "quill"
-import { 
-  TableCell,
-  TableCellLine,
-  CELL_IDENTITY_KEYS,
-  CELL_ATTRIBUTES
-} from './table'
+import { CELL_ATTRIBUTES, CELL_IDENTITY_KEYS, TableCell, TableCellLine } from './table'
 
 const Block = Quill.import("blots/block")
 
 class Header extends Block {
-  static create (value) {
+  static create(value) {
     if (typeof value === 'string') {
       value = { value }
     }
@@ -39,13 +34,13 @@ class Header extends Block {
     }, formats)
   }
 
-  format (name, value) {
+  format(name, value) {
     const { row, cell, rowspan, colspan } = Header.formats(this.domNode)
     if (name === Header.blotName) {
       if (value) {
         super.format(name, {
           value,
-          row, cell, rowspan, colspan
+          row, cell, rowspan, colspan,
         })
       } else {
         if (row) {
@@ -53,7 +48,7 @@ class Header extends Block {
             row,
             cell,
             rowspan,
-            colspan
+            colspan,
           })
         } else {
           super.format(name, value)
@@ -74,7 +69,7 @@ class Header extends Block {
       this.wrap(TableCell.blotName, {
         row,
         colspan,
-        rowspan
+        rowspan,
       })
     }
 
@@ -97,6 +92,7 @@ class Header extends Block {
     this.cache = {};
   }
 }
+
 Header.blotName = 'header';
 Header.tagName = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
 

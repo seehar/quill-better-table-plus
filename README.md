@@ -5,7 +5,7 @@
 A module for better table in Quill, more useful features are supported. There is a list of features below. Thanks [quilljs](https://quilljs.com/) for its awesome extensibility. Hope that quill-better-table could help you.
 
 # Online Demo
-[quill-better-table Codepen Demo](https://codepen.io/soccerloway/pen/WWJowj)
+[quill-better-table Codepen Demo](https://codepen.io/seehar/pen/yLQopvq)
 
 # Updated v1.2.10
 <ul>

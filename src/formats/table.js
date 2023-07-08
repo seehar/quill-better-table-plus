@@ -1,6 +1,7 @@
 import Quill from "quill"
 import { getRelativeRect } from '../utils'
 import Header from './header'
+import { ERROR_LIMIT } from "src/contants";
 
 const Break = Quill.import("blots/break")
 const Block = Quill.import("blots/block")
@@ -8,15 +9,14 @@ const Container = Quill.import("blots/container")
 
 const COL_ATTRIBUTES = ["width"]
 const COL_DEFAULT = {
-  width: 100
+  width: 100,
 }
 const CELL_IDENTITY_KEYS = ["row", "cell"]
 const CELL_ATTRIBUTES = ["rowspan", "colspan"]
 const CELL_DEFAULT = {
   rowspan: 1,
-  colspan: 1
+  colspan: 1,
 }
-const ERROR_LIMIT = 5
 
 class TableCellLine extends Block {
   static create(value) {
@@ -71,7 +71,7 @@ class TableCellLine extends Block {
         row,
         cell,
         rowspan,
-        colspan
+        colspan,
       })
     } else {
       super.format(name, value)
@@ -91,7 +91,7 @@ class TableCellLine extends Block {
         row: rowId,
         colspan,
         rowspan,
-        'cell-bg': cellBg
+        'cell-bg': cellBg,
       })
     }
     super.optimize(context)
@@ -101,6 +101,7 @@ class TableCellLine extends Block {
     return this.parent
   }
 }
+
 TableCellLine.blotName = "table-cell-line"
 TableCellLine.className = "qlbt-cell-line"
 TableCellLine.tagName = "P"
@@ -143,7 +144,7 @@ class TableCell extends Container {
     const formats = {}
 
     if (domNode.hasAttribute("data-row")) {
-      formats["row"] = domNode.getAttribute("data-row")
+      formats.row = domNode.getAttribute("data-row")
     }
 
     if (domNode.hasAttribute("data-cell-bg")) {
@@ -170,7 +171,7 @@ class TableCell extends Container {
     const formats = {}
 
     if (this.domNode.hasAttribute("data-row")) {
-      formats["row"] = this.domNode.getAttribute("data-row")
+      formats.row = this.domNode.getAttribute("data-row")
     }
 
     if (this.domNode.hasAttribute("data-cell-bg")) {
@@ -186,7 +187,7 @@ class TableCell extends Container {
     }, formats)
   }
 
-  toggleAttribute (name, value) {
+  toggleAttribute(name, value) {
     if (value) {
       this.domNode.setAttribute(name, value)
     } else {
@@ -194,7 +195,7 @@ class TableCell extends Container {
     }
   }
 
-  formatChildren (name, value) {
+  formatChildren(name, value) {
     this.children.forEach(child => {
       child.format(name, value)
     })
@@ -227,7 +228,7 @@ class TableCell extends Container {
     if (this.statics.requiredContainer &&
       !(this.parent instanceof this.statics.requiredContainer)) {
       this.wrap(this.statics.requiredContainer.blotName, {
-        row: rowId
+        row: rowId,
       })
     }
     super.optimize(context)
@@ -248,6 +249,7 @@ class TableCell extends Container {
     return this.row() && this.row().table()
   }
 }
+
 TableCell.blotName = "table"
 TableCell.tagName = "TD"
 
@@ -283,7 +285,7 @@ class TableRow extends Container {
     }, {})
   }
 
-  optimize (context) {
+  optimize(context) {
     // optimize function of ShadowBlot
     if (
       this.statics.requiredContainer &&
@@ -318,15 +320,18 @@ class TableRow extends Container {
     return this.parent && this.parent.parent
   }
 }
+
 TableRow.blotName = "table-row"
 TableRow.tagName = "TR"
 
-class TableBody extends Container {}
+class TableBody extends Container {
+}
+
 TableBody.blotName = "table-body"
 TableBody.tagName = "TBODY"
 
 class TableCol extends Block {
-  static create (value) {
+  static create(value) {
     let node = super.create(value)
     COL_ATTRIBUTES.forEach(attrName => {
       node.setAttribute(`${attrName}`, value[attrName] || COL_DEFAULT[attrName])
@@ -352,14 +357,17 @@ class TableCol extends Block {
     }
   }
 
-  html () {
+  html() {
     return this.domNode.outerHTML
   }
 }
+
 TableCol.blotName = "table-col"
 TableCol.tagName = "col"
 
-class TableColGroup extends Container {}
+class TableColGroup extends Container {
+}
+
 TableColGroup.blotName = "table-col-group"
 TableColGroup.tagName = "colgroup"
 
@@ -369,12 +377,12 @@ class TableContainer extends Container {
     return node
   }
 
-  constructor (scroll, domNode) {
+  constructor(scroll, domNode) {
     super(scroll, domNode)
     this.updateTableWidth()
   }
 
-  updateTableWidth () {
+  updateTableWidth() {
     setTimeout(() => {
       const colGroup = this.colGroup()
       if (!colGroup) return
@@ -390,7 +398,7 @@ class TableContainer extends Container {
     return this.rows().map(row => row.children.at(column))
   }
 
-  colGroup () {
+  colGroup() {
     return this.children.head
   }
 
@@ -461,7 +469,7 @@ class TableContainer extends Container {
         row.domNode.getBoundingClientRect(),
         editorWrapper
       )
-      
+
       return rowRect.y > compareRect.y - ERROR_LIMIT &&
         rowRect.y1 < compareRect.y1 + ERROR_LIMIT
     })
@@ -496,7 +504,7 @@ class TableContainer extends Container {
 
     // compute length of removed rows
     const removedRowsLength = this.rows().reduce((sum, row) => {
-      let rowRect  = getRelativeRect(
+      let rowRect = getRelativeRect(
         row.domNode.getBoundingClientRect(),
         editorWrapper
       )
@@ -561,12 +569,12 @@ class TableContainer extends Container {
     const tableCell = this.scroll.create(
       TableCell.blotName,
       Object.assign({}, CELL_DEFAULT, {
-        row: rId
+        row: rId,
       })
     )
     const cellLine = this.scroll.create(TableCellLine.blotName, {
       row: rId,
-      cell: id
+      cell: id,
     })
     tableCell.appendChild(cellLine)
 
@@ -632,13 +640,13 @@ class TableContainer extends Container {
         TableCell.blotName,
         Object.assign({}, CELL_DEFAULT, {
           row: rId,
-          rowspan: cellFormats.rowspan
+          rowspan: cellFormats.rowspan,
         })
       )
       const cellLine = this.scroll.create(TableCellLine.blotName, {
         row: rId,
         cell: id,
-        rowspan: cellFormats.rowspan
+        rowspan: cellFormats.rowspan,
       })
       tableCell.appendChild(cellLine)
 
@@ -682,7 +690,7 @@ class TableContainer extends Container {
     const tableCells = this.descendants(TableCell)
     const rId = rowId()
     const newRow = this.scroll.create(TableRow.blotName, {
-      row: rId
+      row: rId,
     })
     let addBelowCells = []
     let modifiedCells = []
@@ -734,7 +742,7 @@ class TableContainer extends Container {
       const cellLine = this.scroll.create(TableCellLine.blotName, {
         row: rId,
         cell: cId,
-        colspan: cellFormats.colspan
+        colspan: cellFormats.colspan,
       })
       const empty = this.scroll.create(Break.blotName)
       cellLine.appendChild(empty)
@@ -767,7 +775,7 @@ class TableContainer extends Container {
     return affectedCells
   }
 
-  mergeCells (compareRect, mergingCells, rowspan, colspan, editorWrapper) {
+  mergeCells(compareRect, mergingCells, rowspan, colspan, editorWrapper) {
     const mergedCell = mergingCells.reduce((result, tableCell, index) => {
       if (index !== 0) {
         result && tableCell.moveChildren(result)
@@ -793,7 +801,7 @@ class TableContainer extends Container {
     return mergedCell
   }
 
-  unmergeCells (unmergingCells, editorWrapper) {
+  unmergeCells(unmergingCells, editorWrapper) {
     let cellFormats = {}
     let cellRowspan = 1
     let cellColspan = 1
@@ -851,12 +859,13 @@ class TableContainer extends Container {
     return body.children.map(row => row)
   }
 }
+
 TableContainer.blotName = "table-container"
 TableContainer.className = "quill-better-table"
 TableContainer.tagName = "TABLE"
 
 class TableViewWrapper extends Container {
-  constructor (scroll, domNode) {
+  constructor(scroll, domNode) {
     super(scroll, domNode)
     const quill = Quill.find(scroll.domNode.parentNode)
     domNode.addEventListener('scroll', (e) => {
@@ -872,10 +881,11 @@ class TableViewWrapper extends Container {
     }, false)
   }
 
-  table () {
+  table() {
     return this.children.head
   }
 }
+
 TableViewWrapper.blotName = "table-view"
 TableViewWrapper.className = "quill-better-table-wrapper"
 TableViewWrapper.tagName = "DIV"
@@ -932,6 +942,6 @@ export {
 
   // attributes
   CELL_IDENTITY_KEYS,
-  CELL_ATTRIBUTES
+  CELL_ATTRIBUTES,
 }
 

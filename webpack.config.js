@@ -9,14 +9,14 @@ module.exports = (env, argv) => {
 
   if (env && env.minimize) {
     entry = {
-      'quill-better-table-plus.min.js': ['./src/quill-better-table-plus.js']
+      'quill-better-table-plus.min.js': ['./src/quill-better-table-plus.js'],
     }
     minimize = true
   } else {
     entry = {
       'quill-better-table-plus.js': ['./src/quill-better-table-plus.js'],
       'quill-better-table-plus': './src/assets/quill-better-table-plus.scss',
-      'demo/demo1.js': './demo/js/demo1.js'
+      'demo/demo.js': './demo/js/demo.js',
     }
     minimize = false
   }
@@ -25,23 +25,23 @@ module.exports = (env, argv) => {
     entry,
 
     optimization: {
-      minimize
+      minimize,
     },
 
-    output:{
+    output: {
       filename: '[name]',
-      library: 'quillBetterTable',
+      library: 'quillBetterTablePlus',
       libraryExport: 'default',
       libraryTarget: 'umd',
-      path: path.resolve(__dirname, './dist/')
+      path: path.resolve(__dirname, './dist/'),
     },
 
     resolve: {
       alias: {
         'src': path.resolve(__dirname, './src'),
-        'dist': path.resolve(__dirname, './dist')
+        'dist': path.resolve(__dirname, './dist'),
       },
-      extensions: ['.js', '.scss', '.html']
+      extensions: ['.js', '.scss', '.html'],
     },
 
     externals: {
@@ -49,8 +49,8 @@ module.exports = (env, argv) => {
         commonjs: 'quill',
         commonjs2: 'quill',
         amd: 'quill',
-        root: 'Quill'
-      }
+        root: 'Quill',
+      },
     },
 
     module: {
@@ -58,14 +58,14 @@ module.exports = (env, argv) => {
         {
           test: /\.(jpg|jpeg|png)$/,
           include: [
-            path.resolve(__dirname, '../src/assets/imgs')
+            path.resolve(__dirname, '../src/assets/imgs'),
           ],
           use: [{
             loader: 'url-loader',
             options: {
-              limit: 8192
-            }
-          }]
+              limit: 8192,
+            },
+          }],
         },
 
         {
@@ -73,9 +73,9 @@ module.exports = (env, argv) => {
           use: [{
             loader: 'html-loader',
             options: {
-              minimize: true
-            }
-          }]
+              minimize: true,
+            },
+          }],
         },
 
         {
@@ -84,8 +84,8 @@ module.exports = (env, argv) => {
             // fallback to style-loader in development
             !isProduction ? 'style-loader' : MiniCssExtractPlugin.loader,
             'css-loader',
-            'sass-loader'
-          ]
+            'sass-loader',
+          ],
         },
 
         {
@@ -108,35 +108,37 @@ module.exports = (env, argv) => {
                         'last 2 ChromeAndroid major versions',
                       ],
                     },
-                  }
-                ]
-              ]
-            }
-          }
-        }
-      ]
+                  },
+                ],
+              ],
+            },
+          },
+        },
+      ],
     },
 
-    plugins:[
+    plugins: [
       new HtmlWebpackPlugin({
-        title:'quill-better-table',
-        template:'./demo/demo1.html',
-        filename:'demo/demo1.html',
+        title: 'quill-better-table',
+        template: './demo/demo.html',
+        filename: 'demo/demo.html',
       }),
 
       new MiniCssExtractPlugin({
         filename: '[name].css',
-        chunkFilename: '[name].[id].css'
+        chunkFilename: '[name].[id].css',
       }),
 
-      new webpack.HotModuleReplacementPlugin({})
+      new webpack.HotModuleReplacementPlugin({}),
     ],
 
-    devServer:{
-      host:'localhost',
+    devServer: {
+      host: 'localhost',
       contentBase: path.join(__dirname, './dist'),
       port: 8080,
-      hot: false
-    }
+      hot: false,
+      open: true,
+      openPage: "demo/demo.html",
+    },
   }
 }

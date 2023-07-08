@@ -4,31 +4,26 @@ import TableSelection from './modules/table-selection'
 import TableOperationMenu from './modules/table-operation-menu'
 
 // import table node matchers
-import {
-  matchTableCell,
-  matchTableHeader,
-  matchTable
-} from './utils/node-matchers'
+import { matchTable, matchTableCell, matchTableHeader } from './utils/node-matchers'
 
 import { getEventComposedPath } from './utils/index'
+import {
+  cellId,
+  rowId,
+  TableBody,
+  TableCell,
+  TableCellLine,
+  TableCol,
+  TableColGroup,
+  TableContainer,
+  TableRow,
+  TableViewWrapper,
+} from './formats/table';
+import { getColToolCellIndexByBoundary, getColToolCellIndexesByBoundary } from "src/utils/table-util";
+import { ERROR_LIMIT } from "src/contants";
 
 const Module = Quill.import('core/module')
 const Delta = Quill.import('delta')
-
-import {
-  TableCol,
-  TableColGroup,
-  TableCellLine,
-  TableCell,
-  TableRow,
-  TableBody,
-  TableContainer,
-  TableViewWrapper,
-  rowId,
-  cellId
-} from './formats/table';
-import {getColToolCellIndexByBoundary, getColToolCellIndexesByBoundary} from "src/utils/table-util";
-import {ERROR_LIMIT} from "src/contants";
 
 class BetterTable extends Module {
   static register() {
@@ -121,7 +116,7 @@ class BetterTable extends Module {
           row: rowNode,
           cell: cellNode,
           left: evt.pageX,
-          top: evt.pageY
+          top: evt.pageY,
         }, quill, options.operationMenu)
       }
     }, false)
@@ -147,8 +142,8 @@ class BetterTable extends Module {
     // since only one matched bindings callback will excute.
     // expected my binding callback excute first
     // I changed the order of binding callbacks
-    let thisBinding = quill.keyboard.bindings['Backspace'].pop()
-    quill.keyboard.bindings['Backspace'].splice(0, 1, thisBinding)
+    let thisBinding = quill.keyboard.bindings.Backspace.pop()
+    quill.keyboard.bindings.Backspace.splice(0, 1, thisBinding)
 
     // add Matchers to match and render quill-better-table for initialization
     // or pasting
@@ -182,6 +177,7 @@ class BetterTable extends Module {
     let delta = new Delta().retain(range.index)
 
     if (isInTableCell(currentBlot)) {
+      // eslint-disable-next-line no-console
       console.warn(`Can not insert table into a table cell.`)
       return;
     }
@@ -196,7 +192,7 @@ class BetterTable extends Module {
     delta = new Array(rows).fill(0).reduce(memo => {
       let tableRowId = rowId()
       return new Array(columns).fill('\n').reduce((memo, text) => {
-        memo.insert(text, { 'table-cell-line': {row: tableRowId, cell: cellId()} });
+        memo.insert(text, { 'table-cell-line': { row: tableRowId, cell: cellId() } });
         return memo
       }, memo)
     }, delta)
@@ -310,13 +306,13 @@ class BetterTable extends Module {
     tableContainer.tableDestroy();
   }
 
-  showTableTools (table, quill, options) {
+  showTableTools(table, quill, options) {
     this.table = table
     this.columnTool = new TableColumnTool(table, quill, options)
     this.tableSelection = new TableSelection(table, quill, options)
   }
 
-  hideTableTools () {
+  hideTableTools() {
     this.columnTool && this.columnTool.destroy()
     this.tableSelection && this.tableSelection.destroy()
     this.tableOperationMenu && this.tableOperationMenu.destroy()
@@ -335,10 +331,7 @@ BetterTable.keyboardBindings = {
     offset: 0,
     handler(range, context) {
       const [line, offset] = this.quill.getLine(range.index)
-      if (!line.prev || line.prev.statics.blotName !== 'table-cell-line') {
-        return false
-      }
-      return true
+      return !(!line.prev || line.prev.statics.blotName !== 'table-cell-line');
     },
   },
 
@@ -347,7 +340,8 @@ BetterTable.keyboardBindings = {
     format: ['table-cell-line'],
     collapsed: true,
     suffix: /^$/,
-    handler() {},
+    handler() {
+    },
   },
 
   'table-cell-line enter': {
@@ -395,7 +389,7 @@ BetterTable.keyboardBindings = {
       if (target && target.statics.blotName === 'table-view') {
         const targetCell = target.table().rows()[0].children.head
         const targetLine = targetCell.children.head
-        
+
         this.quill.setSelection(
           targetLine.offset(this.quill.scroll),
           0,
@@ -405,7 +399,7 @@ BetterTable.keyboardBindings = {
         return false
       }
       return true
-    }
+    },
   },
   'up-to-table': {
     key: 'ArrowUp',
@@ -416,7 +410,7 @@ BetterTable.keyboardBindings = {
         const rows = target.table().rows()
         const targetCell = rows[rows.length - 1].children.head
         const targetLine = targetCell.children.head
-        
+
         this.quill.setSelection(
           targetLine.offset(this.quill.scroll),
           0,
@@ -426,11 +420,11 @@ BetterTable.keyboardBindings = {
         return false
       }
       return true
-    }
-  }
+    },
+  },
 }
 
-function makeTableArrowHandler (up) {
+function makeTableArrowHandler(up) {
   return {
     key: up ? 'ArrowUp' : 'ArrowDown',
     collapsed: true,
@@ -446,19 +440,19 @@ function makeTableArrowHandler (up) {
 
       if (targetRow != null && targetRow.statics.blotName === 'table-row') {
         let targetCell = targetRow.children.head
-        let totalColspanOfTargetCell = parseInt(targetCell.formats()['colspan'], 10)
+        let totalColspanOfTargetCell = parseInt(targetCell.formats().colspan, 10)
         let cur = cell
-        let totalColspanOfCur = parseInt(cur.formats()['colspan'], 10)
+        let totalColspanOfCur = parseInt(cur.formats().colspan, 10)
 
         // get targetCell above current cell depends on colspan
         while (cur.prev != null) {
           cur = cur.prev
-          totalColspanOfCur += parseInt(cur.formats()['colspan'], 10)
+          totalColspanOfCur += parseInt(cur.formats().colspan, 10)
         }
-        
+
         while (targetCell.next != null && totalColspanOfTargetCell < totalColspanOfCur) {
           targetCell = targetCell.next
-          totalColspanOfTargetCell += parseInt(targetCell.formats()['colspan'], 10)
+          totalColspanOfTargetCell += parseInt(targetCell.formats().colspan, 10)
         }
 
         const index = targetCell.offset(this.quill.scroll)
@@ -486,11 +480,11 @@ function makeTableArrowHandler (up) {
   };
 }
 
-function isTableCell (blot) {
+function isTableCell(blot) {
   return blot.statics.blotName === TableCell.blotName
 }
 
-function isInTableCell (current) {
+function isInTableCell(current) {
   return current && current.parent
     ? isTableCell(current.parent)
       ? true

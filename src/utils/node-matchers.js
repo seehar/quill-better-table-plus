@@ -4,7 +4,7 @@ import { _omit, convertToHex } from './index'
 const Delta = Quill.import('delta')
 
 // rebuild delta
-export function matchTableCell (node, delta, scroll) {
+export function matchTableCell(node, delta, scroll) {
   const row = node.parentNode;
   const table = row.parentNode.tagName === 'TABLE'
     ? row.parentNode
@@ -20,7 +20,7 @@ export function matchTableCell (node, delta, scroll) {
   // bugfix: empty table cells copied from other place will be removed unexpectedly
   if (delta.length() === 0) {
     delta = new Delta().insert('\n', {
-      'table-cell-line': { row: rowId, cell: cellId, rowspan, colspan }
+      'table-cell-line': { row: rowId, cell: cellId, rowspan, colspan },
     })
     return delta
   }
@@ -47,8 +47,8 @@ export function matchTableCell (node, delta, scroll) {
 
       lines.forEach(text => {
         text === '\n'
-        ? newDelta.insert('\n', op.attributes)
-        : newDelta.insert(text, _omit(op.attributes, ['table', 'table-cell-line']))
+          ? newDelta.insert('\n', op.attributes)
+          : newDelta.insert(text, _omit(op.attributes, ['table', 'table-cell-line']))
       })
     } else {
       newDelta.insert(op.insert, op.attributes)
@@ -56,7 +56,7 @@ export function matchTableCell (node, delta, scroll) {
 
     return newDelta
   }, new Delta())
-  
+
   return delta.reduce((newDelta, op) => {
     if (op.insert && typeof op.insert === 'string' &&
       op.insert.startsWith('\n')) {
@@ -81,13 +81,13 @@ export function matchTableCell (node, delta, scroll) {
         ))
       }
     }
-    
+
     return newDelta
   }, new Delta())
 }
 
 // replace th tag with td tag
-export function matchTableHeader (node, delta, scroll) {
+export function matchTableHeader(node, delta, scroll) {
   const row = node.parentNode;
   const table = row.parentNode.tagName === 'TABLE'
     ? row.parentNode
@@ -102,7 +102,7 @@ export function matchTableHeader (node, delta, scroll) {
   // bugfix: empty table cells copied from other place will be removed unexpectedly
   if (delta.length() === 0) {
     delta = new Delta().insert('\n', {
-      'table-cell-line': { row: rowId, cell: cellId, rowspan, colspan }
+      'table-cell-line': { row: rowId, cell: cellId, rowspan, colspan },
     })
     return delta
   }
@@ -134,13 +134,13 @@ export function matchTableHeader (node, delta, scroll) {
 
       lines.forEach(text => {
         text === '\n'
-        ? newDelta.insert('\n', { 'table-cell-line': { row: rowId, cell: cellId, rowspan, colspan } })
-        : newDelta.insert(text, op.attributes)
+          ? newDelta.insert('\n', { 'table-cell-line': { row: rowId, cell: cellId, rowspan, colspan } })
+          : newDelta.insert(text, op.attributes)
       })
     } else {
       newDelta.insert(op.insert, op.attributes)
     }
-    
+
     return newDelta
   }, new Delta())
 
@@ -163,7 +163,7 @@ export function matchTableHeader (node, delta, scroll) {
 }
 
 // supplement colgroup and col
-export function matchTable (node, delta, scroll) {
+export function matchTable(node, delta, scroll) {
   let newColDelta = new Delta()
   const topRow = node.querySelector('tr')
 
@@ -188,20 +188,20 @@ export function matchTable (node, delta, scroll) {
     for (let i = 0; i < maxCellsNumber - colsNumber; i++) {
       newColDelta.insert('\n', { 'table-col': true })
     }
-    
+
     if (colsNumber === 0) return newColDelta.concat(delta)
 
     let lastNumber = 0
     return delta.reduce((finalDelta, op) => {
       finalDelta.insert(op.insert, op.attributes)
-  
+
       if (op.attributes && op.attributes['table-col']) {
         lastNumber += op.insert.length
         if (lastNumber === colsNumber) {
           finalDelta = finalDelta.concat(newColDelta)
         }
       }
-  
+
       return finalDelta
     }, new Delta())
   }

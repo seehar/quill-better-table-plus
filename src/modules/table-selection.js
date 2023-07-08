@@ -7,7 +7,7 @@ const LINE_POSITIONS = ['left', 'right', 'top', 'bottom']
 const ERROR_LIMIT = 2
 
 export default class TableSelection {
-  constructor (table, quill, options) {
+  constructor(table, quill, options) {
     if (!table) return null
     this.table = table
     this.quill = quill
@@ -16,17 +16,17 @@ export default class TableSelection {
     this.selectedTds = []  // array for selected table-cells
     this.dragging = false
     this.selectingHandler = this.mouseDownHandler.bind(this)
-    this.clearSelectionHandler  = this.clearSelection.bind(this)
+    this.clearSelectionHandler = this.clearSelection.bind(this)
 
     this.helpLinesInitial()
     this.quill.root.addEventListener('mousedown',
       this.selectingHandler,
       false)
 
-    this.quill.on('text-change', this.clearSelectionHandler )
+    this.quill.on('text-change', this.clearSelectionHandler)
   }
 
-  helpLinesInitial () {
+  helpLinesInitial() {
     let parent = this.quill.root.parentNode
     LINE_POSITIONS.forEach(direction => {
       this[direction] = document.createElement('div')
@@ -35,13 +35,13 @@ export default class TableSelection {
       css(this[direction], {
         position: 'absolute',
         display: 'none',
-        'background-color': PRIMARY_COLOR
+        'background-color': PRIMARY_COLOR,
       })
       parent.appendChild(this[direction])
     })
   }
 
-  mouseDownHandler (e) {
+  mouseDownHandler(e) {
     if (e.button !== 0 || !e.target.closest(".quill-better-table")) return
     this.quill.root.addEventListener('mousemove', mouseMoveHandler, false)
     this.quill.root.addEventListener('mouseup', mouseUpHandler, false)
@@ -58,7 +58,7 @@ export default class TableSelection {
     this.selectedTds = this.computeSelectedTds()
     this.repositionHelpLines()
 
-    function mouseMoveHandler (e) {
+    function mouseMoveHandler(e) {
       if (e.button !== 0 || !e.target.closest(".quill-better-table")) return
       const endTd = e.target.closest('td[data-row]')
       const endTdRect = getRelativeRect(
@@ -76,14 +76,14 @@ export default class TableSelection {
       }
     }
 
-    function mouseUpHandler (e) {
+    function mouseUpHandler(e) {
       self.quill.root.removeEventListener('mousemove', mouseMoveHandler, false)
       self.quill.root.removeEventListener('mouseup', mouseUpHandler, false)
       self.dragging = false
     }
   }
 
-  correctBoundary () {
+  correctBoundary() {
     const tableContainer = Quill.find(this.table)
     const tableCells = tableContainer.descendants(TableCell)
 
@@ -93,19 +93,19 @@ export default class TableSelection {
         this.quill.root.parentNode
       )
       let isCellIntersected = (
-          (x + ERROR_LIMIT >= this.boundary.x && x + ERROR_LIMIT <= this.boundary.x1) ||
-          (x - ERROR_LIMIT + width >= this.boundary.x && x - ERROR_LIMIT + width <= this.boundary.x1)
-        ) && (
-          (y + ERROR_LIMIT >= this.boundary.y && y + ERROR_LIMIT <= this.boundary.y1) ||
-          (y - ERROR_LIMIT + height >= this.boundary.y && y - ERROR_LIMIT + height <= this.boundary.y1)
-        )
+        (x + ERROR_LIMIT >= this.boundary.x && x + ERROR_LIMIT <= this.boundary.x1) ||
+        (x - ERROR_LIMIT + width >= this.boundary.x && x - ERROR_LIMIT + width <= this.boundary.x1)
+      ) && (
+        (y + ERROR_LIMIT >= this.boundary.y && y + ERROR_LIMIT <= this.boundary.y1) ||
+        (y - ERROR_LIMIT + height >= this.boundary.y && y - ERROR_LIMIT + height <= this.boundary.y1)
+      )
       if (isCellIntersected) {
         this.boundary = computeBoundaryFromRects(this.boundary, { x, y, width, height })
       }
     })
   }
 
-  computeSelectedTds () {
+  computeSelectedTds() {
     const tableContainer = Quill.find(this.table)
     const tableCells = tableContainer.descendants(TableCell)
 
@@ -115,12 +115,12 @@ export default class TableSelection {
         this.quill.root.parentNode
       )
       let isCellIncluded = (
-          x + ERROR_LIMIT >= this.boundary.x &&
-          x - ERROR_LIMIT + width <= this.boundary.x1
-        ) && (
-          y + ERROR_LIMIT >= this.boundary.y &&
-          y - ERROR_LIMIT + height <= this.boundary.y1
-        )
+        x + ERROR_LIMIT >= this.boundary.x &&
+        x - ERROR_LIMIT + width <= this.boundary.x1
+      ) && (
+        y + ERROR_LIMIT >= this.boundary.y &&
+        y - ERROR_LIMIT + height <= this.boundary.y1
+      )
 
       if (isCellIncluded) {
         selectedCells.push(tableCell)
@@ -130,14 +130,14 @@ export default class TableSelection {
     }, [])
   }
 
-  repositionHelpLines () {
+  repositionHelpLines() {
     const tableViewScrollLeft = this.table.parentNode.scrollLeft
     css(this.left, {
       display: 'block',
       left: `${this.boundary.x - tableViewScrollLeft - 1}px`,
       top: `${this.boundary.y}px`,
       height: `${this.boundary.height + 1}px`,
-      width: '1px'
+      width: '1px',
     })
 
     css(this.right, {
@@ -145,7 +145,7 @@ export default class TableSelection {
       left: `${this.boundary.x1 - tableViewScrollLeft}px`,
       top: `${this.boundary.y}px`,
       height: `${this.boundary.height + 1}px`,
-      width: '1px'
+      width: '1px',
     })
 
     css(this.top, {
@@ -153,7 +153,7 @@ export default class TableSelection {
       left: `${this.boundary.x - 1 - tableViewScrollLeft}px`,
       top: `${this.boundary.y}px`,
       width: `${this.boundary.width + 1}px`,
-      height: '1px'
+      height: '1px',
     })
 
     css(this.bottom, {
@@ -161,13 +161,13 @@ export default class TableSelection {
       left: `${this.boundary.x - 1 - tableViewScrollLeft}px`,
       top: `${this.boundary.y1 + 1}px`,
       width: `${this.boundary.width + 1}px`,
-      height: '1px'
+      height: '1px',
     })
   }
 
   // based on selectedTds compute positions of help lines
   // It is useful when selectedTds are not changed
-  refreshHelpLinesPosition () {
+  refreshHelpLinesPosition() {
     const startRect = getRelativeRect(
       this.selectedTds[0].domNode.getBoundingClientRect(),
       this.quill.root.parentNode
@@ -180,7 +180,7 @@ export default class TableSelection {
     this.repositionHelpLines()
   }
 
-  destroy () {
+  destroy() {
     LINE_POSITIONS.forEach(direction => {
       this[direction].remove()
       this[direction] = null
@@ -188,14 +188,14 @@ export default class TableSelection {
 
     this.quill.root.removeEventListener('mousedown',
       this.selectingHandler,
-    false)
+      false)
 
-    this.quill.off('text-change', this.clearSelectionHandler )
+    this.quill.off('text-change', this.clearSelectionHandler)
 
     return null
   }
 
-  setSelection (startRect, endRect) {
+  setSelection(startRect, endRect) {
     this.boundary = computeBoundaryFromRects(
       getRelativeRect(startRect, this.quill.root.parentNode),
       getRelativeRect(endRect, this.quill.root.parentNode)
@@ -205,18 +205,18 @@ export default class TableSelection {
     this.repositionHelpLines()
   }
 
-  clearSelection () {
+  clearSelection() {
     this.boundary = {}
     this.selectedTds = []
     LINE_POSITIONS.forEach(direction => {
       this[direction] && css(this[direction], {
-        display: 'none'
+        display: 'none',
       })
     })
   }
 }
 
-function computeBoundaryFromRects (startRect, endRect) {
+function computeBoundaryFromRects(startRect, endRect) {
   let x = Math.min(
     startRect.x,
     endRect.x,

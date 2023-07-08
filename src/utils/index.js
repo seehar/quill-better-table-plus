@@ -1,4 +1,4 @@
-export function css (domNode, rules) {
+export function css(domNode, rules) {
   if (typeof rules === 'object') {
     for (let prop in rules) {
       domNode.style[prop] = rules[prop]
@@ -12,7 +12,7 @@ export function css (domNode, rules) {
  * @param  {Element} container  container element
  * @return {Object}             an object with rect data
  */
-export function getRelativeRect (targetRect, container) {
+export function getRelativeRect(targetRect, container) {
   let containerRect = container.getBoundingClientRect()
 
   return {
@@ -21,7 +21,7 @@ export function getRelativeRect (targetRect, container) {
     x1: targetRect.x - containerRect.x - container.scrollLeft + targetRect.width,
     y1: targetRect.y - containerRect.y - container.scrollTop + targetRect.height,
     width: targetRect.width,
-    height: targetRect.height
+    height: targetRect.height,
   }
 }
 
@@ -31,7 +31,7 @@ export function getRelativeRect (targetRect, container) {
  * @param  {Array} uselessKeys  keys of removed properties
  * @return {Object}             new Object without useless properties
  */
-export function _omit (obj, uselessKeys) {
+export function _omit(obj, uselessKeys) {
   return obj && Object.keys(obj).reduce((acc, key) => {
     return uselessKeys.includes(key) ?
       acc :
@@ -48,13 +48,13 @@ export function _omit (obj, uselessKeys) {
  * @param {Event} evt
  * @return {Array} an array of event.path
  */
-export function getEventComposedPath (evt) {
+export function getEventComposedPath(evt) {
   let path
   // chrome, opera, safari, firefox
   path = evt.path || (evt.composedPath && evt.composedPath())
 
   // other: edge
-  if (path == undefined && evt.target) {
+  if (path === undefined && evt.target) {
     path = []
     let target = evt.target
     path.push(target)
@@ -68,27 +68,27 @@ export function getEventComposedPath (evt) {
   return path
 }
 
-export function convertToHex (rgb) {
-  var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+export function convertToHex(rgb) {
+  const reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
   // if rgb
   if (/^(rgb|RGB)/.test(rgb)) {
-    var color = rgb.toString().match(/\d+/g);
-    var hex = "#";
+    const color = rgb.toString().match(/\d+/g);
+    let hex = "#";
 
-    for (var i = 0; i < 3; i++) {
-        hex += ("0" + Number(color[i]).toString(16)).slice(-2);
+    for (let i = 0; i < 3; i++) {
+      hex += ("0" + Number(color[i]).toString(16)).slice(-2);
     }
     return hex;
   } else if (reg.test(rgb)) {
-    var aNum = rgb.replace(/#/,"").split("");
+    const aNum = rgb.replace(/#/, "").split("");
     if (aNum.length === 6) {
-        return rgb;
-    } else if(aNum.length === 3) {
-        var numHex = "#";
-        for (var i=0; i<aNum.length; i+=1) {
-            numHex += (aNum[i] + aNum[i]);
-        }
-        return numHex;
+      return rgb;
+    } else if (aNum.length === 3) {
+      let numHex = "#";
+      for (let index = 0; index < aNum.length; index += 1) {
+        numHex += (aNum[index] + aNum[index]);
+      }
+      return numHex;
     }
   }
 

@@ -1,6 +1,6 @@
-import {getRelativeRect} from "src/utils/index";
+import { getRelativeRect } from "src/utils/index";
 
-function getColToolCellIndexByBoundary (cells, boundary, conditionFn, container) {
+function getColToolCellIndexByBoundary(cells, boundary, conditionFn, container) {
   return cells.reduce((findIndex, cell) => {
     let cellRect = getRelativeRect(cell.getBoundingClientRect(), container)
     if (conditionFn(cellRect, boundary)) {
@@ -10,7 +10,7 @@ function getColToolCellIndexByBoundary (cells, boundary, conditionFn, container)
   }, false)
 }
 
-function getColToolCellIndexesByBoundary (cells, boundary, conditionFn, container) {
+function getColToolCellIndexesByBoundary(cells, boundary, conditionFn, container) {
   return cells.reduce((findIndexes, cell) => {
     let cellRect = getRelativeRect(
       cell.getBoundingClientRect(),
@@ -25,5 +25,5 @@ function getColToolCellIndexesByBoundary (cells, boundary, conditionFn, containe
 
 export {
   getColToolCellIndexByBoundary,
-  getColToolCellIndexesByBoundary
+  getColToolCellIndexesByBoundary,
 }
