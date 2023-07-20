@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "f4225e7721f9356c694d";
+/******/ 	var hotCurrentHash = "16c14c14290922e20df7";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1161,7 +1161,7 @@ class table_column_tool_TableColumnTool {
       $helpLine.remove();
       $helpLine = null;
       tableContainer.updateTableWidth();
-      const tableSelection = this.quill.getModule('better-table').tableSelection;
+      const tableSelection = this.quill.getModule('better-table-plus').tableSelection;
       tableSelection && tableSelection.clearSelection();
     };
     const handleMousedown = e => {
@@ -2401,7 +2401,7 @@ const MENU_ITEMS_DEFAULT = {
     text: 'Delete table',
     iconSrc: icon_operation_9_default.a,
     handler() {
-      const betterTableModule = this.quill.getModule('better-table');
+      const betterTableModule = this.quill.getModule('better-table-plus');
       const tableContainer = external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.find(this.table);
       betterTableModule.hideTableTools();
       tableContainer.remove();
@@ -2411,7 +2411,7 @@ const MENU_ITEMS_DEFAULT = {
 };
 class table_operation_menu_TableOperationMenu {
   constructor(params, quill, options) {
-    const betterTableModule = quill.getModule('better-table');
+    const betterTableModule = quill.getModule('better-table-plus');
     this.tableSelection = betterTableModule.tableSelection;
     this.table = params.table;
     this.quill = quill;
@@ -3134,7 +3134,7 @@ window.onload = () => {
             }
           },
           color: {
-            colors: ['red', 'green', 'yellow', 'white', 'red', 'green', 'yellow', 'white']
+            colors: ['red', 'green', 'yellow', 'white', 'gold', 'cadetblue', 'darkseagreen', 'skyblue']
           }
         }
       },
