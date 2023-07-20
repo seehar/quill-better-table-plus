@@ -1,11 +1,14 @@
 # quill-better-table-plus
 
-[![npm version](https://badge.fury.io/js/quill-better-table-plus.svg)](https://badge.fury.io/js/quill-better-table-plus)
+<p>
+  <a href="https://www.npmjs.com/package/quill-better-table-plus"><img src="https://img.shields.io/npm/v/quill-better-table-plus.svg?sanitize=true" alt="Version"></a>
+  <a href="https://npmcharts.com/compare/quill-better-table-plus?minimal=true"><img src="https://img.shields.io/npm/dm/quill-better-table-plus.svg?sanitize=true" alt="Downloads"></a>
+  <a href="https://www.npmjs.com/package/quill-better-table-plus"><img src="https://img.shields.io/npm/l/quill-better-table-plus.svg?sanitize=true" alt="License"></a>
+</p>
 
 中文 | [English](https://github.com/seehar/quill-better-table-plus/blob/master/README.md)
 
 > 注意：这是对 `quill-better-table` npm 包的增强版（Plus）。原始包已经很久没有维护，这个增强版将由我来维护和更新。
-
 
 # 简介
 
@@ -14,12 +17,12 @@
 这个包是基于原始 `quill-better-table` 包的最新可用版本进行的增强，增加了一些新功能，并修复了一些已知问题，以确保它适用于当前的环境和需求。
 
 ## 必要条件
+
 [quilljs](https://github.com/quilljs/quill) v2.0.0-dev.3
 
 ## 在线 Demo
 
 [quill-better-table-plus Codepen Demo](https://codepen.io/seehar/pen/yLQopvq)
-
 
 # 安装
 
@@ -34,10 +37,12 @@ npm install quill-better-table-plus
 导入 `Quill` 和样式依赖项
 
 ```html
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.min.js" type="text/javascript"></script>
 ```
 
 ```html
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.snow.min.css" rel="stylesheet">
 <link href="https://unpkg.com/quill-better-table-plus@0.1.3/dist/quill-better-table-plus.css" rel="stylesheet">
 ```
@@ -73,9 +78,9 @@ window.onload = () => {
 
   document.body.querySelector('#insert-table')
     .onclick = () => {
-      let tableModule = quill.getModule('better-table-plus')
-      tableModule.insertTable(3, 3)
-    }
+    let tableModule = quill.getModule('better-table-plus')
+    tableModule.insertTable(3, 3)
+  }
 }
 ```
 
@@ -96,7 +101,6 @@ window.onload = () => {
 欢迎贡献代码和提交问题。如果你发现任何 bug，或者有任何改进建议，请创建一个 issue 或提交一个 pull 请求。
 
 > 开发注意：node 版本：`12.x`, 比如：`12.22.12`
-
 
 # 许可证
 
