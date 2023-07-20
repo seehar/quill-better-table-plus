@@ -5,6 +5,7 @@
   <a href="https://npmcharts.com/compare/quill-better-table-plus?minimal=true"><img src="https://img.shields.io/npm/dm/quill-better-table-plus.svg?sanitize=true" alt="Downloads"></a>
   <a href="https://www.npmjs.com/package/quill-better-table-plus"><img src="https://img.shields.io/npm/l/quill-better-table-plus.svg?sanitize=true" alt="License"></a>
 </p>
+
 [中文](https://github.com/seehar/quill-better-table-plus/blob/master/README-zh.md) | English
 
 > Note: This is an enhanced (Plus) version of the `quill-better-table` npm package. The original package has not been
