@@ -557,7 +557,7 @@ class TableContainer extends Container {
 
   tableDestroy() {
     const quill = Quill.find(this.scroll.domNode.parentNode)
-    const tableModule = quill.getModule("better-table")
+    const tableModule = quill.getModule("better-table-plus")
     this.remove()
     tableModule.hideTableTools()
     quill.update(Quill.sources.USER)
@@ -869,7 +869,7 @@ class TableViewWrapper extends Container {
     super(scroll, domNode)
     const quill = Quill.find(scroll.domNode.parentNode)
     domNode.addEventListener('scroll', (e) => {
-      const tableModule = quill.getModule('better-table')
+      const tableModule = quill.getModule('better-table-plus')
       if (tableModule.columnTool) {
         tableModule.columnTool.domNode.scrollLeft = e.target.scrollLeft
       }

@@ -1,87 +1,55 @@
 # quill-better-table-plus
 
-> node: `12.x`, example: `12.22.12`
+[![npm version](README.assets/quill-better-table-plus.svg)](https://badge.fury.io/js/quill-better-table-plus)
 
-A module for better table in Quill, more useful features are supported. There is a list of features below. Thanks [quilljs](https://quilljs.com/) for its awesome extensibility. Hope that quill-better-table could help you.
+[中文](https://github.com/seehar/quill-better-table-plus/blob/master/README-zh.md) | English
 
-# Online Demo
-[quill-better-table Codepen Demo](https://codepen.io/seehar/pen/yLQopvq)
+> Note: This is an enhanced (Plus) version of the `quill-better-table` npm package. The original package has not been maintained for a long time, and this enhanced version will be maintained and updated by me.
 
-# Updated v1.2.10
-<ul>
-  <li>
-    <p>Replace TableCellLine.tagName from `DIV` to `P`. Using `DIV` to implement TableCellLine led a copy/paste issue: <a href="https://github.com/soccerloway/quill-better-table/issues/50">Pasting plain text also changes to table format</a>. There are many more similar situations. When the user pastes the DIV tag into the editor, the DIV will be treated as a TableCellLine. Using `P` is more appropriate and fixes the mentioned issue. If this update caused any other new issues, tell me as soon as possible please, thanks！ Best wishes.</p>
-  </li>
-</ul>
 
-# Features
-Clicking on tables in quill editor will initialize the tools for table, all features are based on it.
+# Summary
 
-<ul>
-  <li>
-    <h3>Multiple lines in table cell</h3>
-    <p>Press Enter to add new lines in the table cell now.</p>
-  </li>
-  <li>
-    <h3>Add table column left/right</h3>
-    <p>Right-click on table to open context menu, you can see the button.</p>
-  </li>
-  <li>
-    <h3>Add table row top/bottom</h3>
-    <p>Right-click on table to open context menu, you can see the button.</p>
-  </li>
-  <li>
-    <h3>Remove selected table columns</h3>
-    <p>Right-click on table to open context menu, you can see the button.</p>
-  </li>
-  <li>
-    <h3>Remove selected table rows</h3>
-    <p>Right-click on table to open context menu, you can see the button.</p>
-  </li>
-  <li>
-    <h3>Selects multiple table cells</h3>
-    <p>Dragging over the table cells could select the tableCells surrounded by the highlight borders.</p>
-  </li>
-  <li>
-    <h3>Merge/Unmerge table cells</h3>
-    <p>Right-click on table to open context menu, you can see the button.</p>
-  </li>
-  <li>
-    <h3>Resize the width of column</h3>
-    <p>Dragging lines between the top tool for columns could resize width of columns.</p>
-  </li>
-  <li>
-    <h3>Delete table</h3>
-    <p>Right-click on table to open context menu, you can see the button.</p>
-  </li>
-</ul>
+`quill-better-table-plus` is an enhanced version of the `Quill` rich text editor plugin that provides more powerful and flexible table editing features.It enables users to easily create, edit and format tables, as well as perform more complex table operations.
 
-# Requirements
+This package is an enhancement based on the latest available version of the original `quill-better-table` package, adding a number of new features and fixing a number of known issues to ensure that it is suitable for current environments and needs.
+
+## requirement
+
 [quilljs](https://github.com/quilljs/quill) v2.0.0-dev.3
 
-Since I use webpack externals to bundle, you must expose `Quill` to window object, like load quill.js by script tag globally. Or you may need to fork this repo and build what you need.
+## Online Demo
 
-# Installation
-```
+[quill-better-table-plus Codepen Demo](https://codepen.io/seehar/pen/yLQopvq)
+
+
+# Install
+
+You can install `quill-better-table-plus` via npm:
+
+```shell
 npm install quill-better-table-plus
 ```
 
-# Usage
-Load quill and style dependencies
-```
+# Use
+
+Import `Quill` and style dependencies
+
+```html
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.min.js" type="text/javascript"></script>
 ```
-```
+
+```html
 <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.snow.min.css" rel="stylesheet">
-<link href="https://unpkg.com/quill-better-table@1.2.8/dist/quill-better-table.css" rel="stylesheet">
+<link href="https://unpkg.com/quill-better-table-plus@0.1.3/dist/quill-better-table-plus.css" rel="stylesheet">
 ```
 
-ES6
-```
-import QuillBetterTable from 'quill-better-table'
+## ES6
+
+```javascript
+import QuillBetterTablePlus from 'quill-better-table-plus'
 
 Quill.register({
-  'modules/better-table': QuillBetterTable
+  'modules/better-table-plus': QuillBetterTablePlus
 }, true)
 
 window.onload = () => {
@@ -89,7 +57,7 @@ window.onload = () => {
     theme: 'snow',
     modules: {
       table: false,  // disable table module
-      'better-table': {
+      'better-table-plus': {
         operationMenu: {
           items: {
             unmergeCells: {
@@ -99,104 +67,38 @@ window.onload = () => {
         }
       },
       keyboard: {
-        bindings: QuillBetterTable.keyboardBindings
+        bindings: QuillBetterTablePlus.keyboardBindings
       }
     }
   })
 
   document.body.querySelector('#insert-table')
     .onclick = () => {
-      let tableModule = quill.getModule('better-table')
+      let tableModule = quill.getModule('better-table-plus')
       tableModule.insertTable(3, 3)
     }
 }
 ```
 
-# Module methods
-first, you can get quill-better-table module by `quill.getModule`
-```
-let module = quill.getModule('better-table')
-```
-## module.getTable(range = quill.getSelection())
-get an array with TableContainer, TableRow, TableCell, offset through the given range.
-```
-module.getTable()  // current selection
-module.getTable(range)
-// [TableContainer, TableRow, TableCell, 0]
-```
+# Future Functions
 
-## module.insertTable(rows: Number, columns: Number)
-insert table at current position
-```
-module.insertTable(3, 3)
-```
+We plan to further enhance `quill-better-table-plus` by adding the following features in a future release:
 
-# Module Options
-quill-better-table only provide operation options now.
-```
-const quill = new Quill('#editor', {
-  theme: 'snow',
-  modules: {
-    table: false,  // disable table module
-    'better-table': {
-      operationMenu: {
-        items: {
-          unmergeCells: {
-            text: 'Another unmerge cells name'
-          }
-        },
-        color: {
-          colors: ['#fff', 'red', 'rgb(0, 0, 0)'],  // colors in operationMenu
-          text: 'Background Colors'  // subtitle
-        } 
-      }
-    },
-    keyboard: {
-      bindings: QuillBetterTable.keyboardBindings
-    }
-  }
-})
-```
-## operationMenu
-OperationMenu configures the operation list in right-click menu.
+- [ ] **Adapts to multiple `table` formats**: Supports a wide range of directly copied and pasted `table` data with styles and better parsing and rendering.
+- [ ] **Expose more `api`**: Provide more `api` for developers to use in order to quickly apply different features, looks and styles.
+- [ ] **`Typescript` support**
 
-## operationMenu.items
-operationMenu show all operations as default. `false` will remove the operation.
-```
-{
-  operationKey: {
-    text: 'foo'
-  },
+We are working hard on these features and will gradually roll them out in future releases. Stay tuned!
 
-  operationKey: false
-}
-```
-`operationKey` is the name of operation, there is a list below:
-<ul>
-  <li>insertColumnRight</li>
-  <li>insertColumnLeft</li>
-  <li>insertRowUp</li>
-  <li>insertRowDown</li>
-  <li>mergeCells</li>
-  <li>unmergeCells</li>
-  <li>deleteColumn</li>
-  <li>deleteRow</li>
-  <li>deleteTable</li>
-</ul>
-
-You may need to modify the menu text, `operationKey.text` will do that.
-
-## operationMenu.color
-Background colors is optional, the default is hidden. If you need this feature, use this configure.
-```
-{
-  colors: ['#fff', 'red', 'rgb(0, 0, 0)'],  // colors you need in operationMenu, ['white', 'red', 'yellow', 'blue'] as default
-  text: 'Background Colors'  // subtitle, 'Background Colors' as default
-} 
-```
+If you have any other feature suggestions or ideas, feel free to raise them in the issue, we'd love to hear your feedback and contributions.
 
 # Community
-Contribute on [Issues](https://github.com/seehar/quill-better-table-plus/issues), I glad to hear your suggestion.
+
+Feel free to contribute code and submit issues. If you find any bugs, or have suggestions for improvements, please create an issue or submit a pull request.
+
+> Developer note: node version: `12.x`, e.g. `12.22.12`.
+
 
 # License
+
 [MIT License](https://rmm5t.mit-license.org/)

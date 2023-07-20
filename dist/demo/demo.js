@@ -292,7 +292,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 				};
 /******/ 			});
 /******/ 			hotUpdate = {};
-/******/ 			var chunkId = 2;
+/******/ 			var chunkId = 0;
 /******/ 			// eslint-disable-next-line no-lone-blocks
 /******/ 			{
 /******/ 				hotEnsureUpdateChunk(chunkId);
@@ -864,7 +864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return hotCreateRequire(12)(__webpack_require__.s = 12);
+/******/ 	return hotCreateRequire(13)(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -3100,12 +3100,81 @@ function isInTableCell(current) {
 /* harmony default export */ var quill_better_table_plus = __webpack_exports__["default"] = (quill_better_table_plus_BetterTable);
 
 /***/ }),
-/* 11 */,
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(10);
+// extracted by mini-css-extract-plugin
 
+/***/ }),
+/* 12 */,
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var src_quill_better_table_plus_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
+/* harmony import */ var src_assets_quill_better_table_plus_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(11);
+/* harmony import */ var src_assets_quill_better_table_plus_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(src_assets_quill_better_table_plus_scss__WEBPACK_IMPORTED_MODULE_1__);
+
+// import better-table styles file
+
+Quill.register({
+  'modules/better-table-plus': src_quill_better_table_plus_js__WEBPACK_IMPORTED_MODULE_0__["default"]
+}, true);
+window.onload = () => {
+  const quill = new Quill('#editor-wrapper', {
+    theme: 'snow',
+    modules: {
+      table: false,
+      'better-table-plus': {
+        operationMenu: {
+          items: {
+            unmergeCells: {
+              text: 'Another unmerge cells name'
+            }
+          },
+          color: {
+            colors: ['red', 'green', 'yellow', 'white', 'red', 'green', 'yellow', 'white']
+          }
+        }
+      },
+      keyboard: {
+        bindings: src_quill_better_table_plus_js__WEBPACK_IMPORTED_MODULE_0__["default"].keyboardBindings
+      }
+    }
+  });
+  let tableModule = quill.getModule('better-table-plus');
+  document.body.querySelector('#insert-table').onclick = () => {
+    tableModule.insertTable(3, 3);
+  };
+  document.body.querySelector('#get-table').onclick = () => {
+    console.log(tableModule.getTable());
+  };
+  document.body.querySelector('#get-contents').onclick = () => {
+    console.log(quill.getContents());
+  };
+  document.body.querySelector('#insert-column-right').onclick = () => {
+    tableModule.insertColumnRight();
+  };
+  document.body.querySelector('#insert-column-left').onclick = () => {
+    tableModule.insertColumnLeft();
+  };
+  document.body.querySelector('#insert-row-above').onclick = () => {
+    tableModule.insertRowAbove();
+  };
+  document.body.querySelector('#insert-row-below').onclick = () => {
+    tableModule.insertRowBelow();
+  };
+  document.body.querySelector('#delete-column').onclick = () => {
+    tableModule.deleteColumn();
+  };
+  document.body.querySelector('#delete-row').onclick = () => {
+    tableModule.deleteRow();
+  };
+  document.body.querySelector('#delete-table').onclick = () => {
+    tableModule.deleteTable();
+  };
+};
 
 /***/ })
 /******/ ])["default"];
