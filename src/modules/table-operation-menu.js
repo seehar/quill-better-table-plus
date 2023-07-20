@@ -244,7 +244,7 @@ const MENU_ITEMS_DEFAULT = {
     text: 'Delete table',
     iconSrc: operationIcon9,
     handler() {
-      const betterTableModule = this.quill.getModule('better-table')
+      const betterTableModule = this.quill.getModule('better-table-plus')
       const tableContainer = Quill.find(this.table)
       betterTableModule.hideTableTools()
       tableContainer.remove()
@@ -255,7 +255,7 @@ const MENU_ITEMS_DEFAULT = {
 
 export default class TableOperationMenu {
   constructor(params, quill, options) {
-    const betterTableModule = quill.getModule('better-table')
+    const betterTableModule = quill.getModule('better-table-plus')
     this.tableSelection = betterTableModule.tableSelection
     this.table = params.table
     this.quill = quill

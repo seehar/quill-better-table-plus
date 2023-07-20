@@ -2,7 +2,9 @@
 
 [![npm version](https://badge.fury.io/js/quill-better-table-plus.svg)](https://badge.fury.io/js/quill-better-table-plus)
 
-> 注意：这是对 `quill-better-table` npm 包的增强版（Plus）。原始包已经很久没有维护，而这个增强版由我来维护和更新。
+中文 | [English](https://github.com/seehar/quill-better-table-plus/blob/master/README.md)
+
+> 注意：这是对 `quill-better-table` npm 包的增强版（Plus）。原始包已经很久没有维护，这个增强版将由我来维护和更新。
 
 
 # 简介
@@ -14,6 +16,10 @@
 ## 必要条件
 [quilljs](https://github.com/quilljs/quill) v2.0.0-dev.3
 
+## 在线 Demo
+
+[quill-better-table-plus Codepen Demo](https://codepen.io/seehar/pen/yLQopvq)
+
 
 # 安装
 
@@ -23,48 +29,55 @@
 npm install quill-better-table-plus
 ```
 
-## 使用
+# 使用
 
-## 导入插件
-在使用 `Quill` 编辑器时，导入 `quill-better-table-plus` 插件：
+导入 `Quill` 和样式依赖项
 
-
-```javascript
-import Quill from 'quill';
-import QuillBetterTablePlus from 'quill-better-table-plus';
-
-Quill.register('modules/better-table-plus', QuillBetterTablePlus);
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.min.js" type="text/javascript"></script>
 ```
 
-## 初始化 `Quill` 编辑器
-```javascript
-const quill = new Quill('#editor-container', {
-  // ...其他配置项
-
-  modules: {
-    // ...其他模块
-    betterTablePlus: true // 启用表格插件
-  }
-});
+```html
+<link href="https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.0-dev.3/quill.snow.min.css" rel="stylesheet">
+<link href="https://unpkg.com/quill-better-table-plus@0.1.3/dist/quill-better-table-plus.css" rel="stylesheet">
 ```
 
-## 示例代码
-你可以使用以下示例代码来展示 `quill-better-table-plus` 插件的一些功能：
+## ES6
 
 ```javascript
-// 创建表格
-quill.getModule('quill-better-table-plus').createTable(3, 3);
+import QuillBetterTablePlus from 'quill-better-table-plus'
 
-// 合并单元格
-quill.getModule('quill-better-table-plus').mergeCells(0, 0, 1, 1);
+Quill.register({
+  'modules/better-table-plus': QuillBetterTablePlus
+}, true)
 
-// 拆分单元格
-quill.getModule('quill-better-table-plus').splitCell(0, 0);
+window.onload = () => {
+  const quill = new Quill('#editor-wrapper', {
+    theme: 'snow',
+    modules: {
+      table: false,  // disable table module
+      'better-table-plus': {
+        operationMenu: {
+          items: {
+            unmergeCells: {
+              text: 'Another unmerge cells name'
+            }
+          }
+        }
+      },
+      keyboard: {
+        bindings: QuillBetterTablePlus.keyboardBindings
+      }
+    }
+  })
 
-// 设置表格属性
-quill.getModule('quill-better-table-plus').setTableAttribute(0, 'border', '2px solid red');
+  document.body.querySelector('#insert-table')
+    .onclick = () => {
+      let tableModule = quill.getModule('better-table-plus')
+      tableModule.insertTable(3, 3)
+    }
+}
 ```
-请参阅原始 `quill-better-table-plus` 文档以获取更多详细信息和示例。
 
 # 未来功能
 
@@ -78,7 +91,7 @@ quill.getModule('quill-better-table-plus').setTableAttribute(0, 'border', '2px s
 
 如果你有任何其他功能建议或想法，欢迎在 issue 中提出，我们非常乐意听取你的反馈和贡献。
 
-# 贡献
+# 社区
 
 欢迎贡献代码和提交问题。如果你发现任何 bug，或者有任何改进建议，请创建一个 issue 或提交一个 pull 请求。
 
@@ -86,4 +99,5 @@ quill.getModule('quill-better-table-plus').setTableAttribute(0, 'border', '2px s
 
 
 # 许可证
-`quill-better-table-plus` 使用 MIT 许可证。
+
+[MIT License](https://rmm5t.mit-license.org/)
