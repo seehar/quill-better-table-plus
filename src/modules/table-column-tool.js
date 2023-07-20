@@ -136,7 +136,7 @@ export default class TableColumnTool {
       $helpLine = null
       tableContainer.updateTableWidth()
 
-      const tableSelection = this.quill.getModule('better-table').tableSelection
+      const tableSelection = this.quill.getModule('better-table-plus').tableSelection
       tableSelection && tableSelection.clearSelection()
     }
 
