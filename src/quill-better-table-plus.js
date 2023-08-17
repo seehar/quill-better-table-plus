@@ -174,7 +174,6 @@ class BetterTable extends Module {
     const range = this.quill.getSelection(true)
     if (range == null) return
     let currentBlot = this.quill.getLeaf(range.index)[0]
-    let delta = new Delta().retain(range.index)
 
     if (isInTableCell(currentBlot)) {
       // eslint-disable-next-line no-console
@@ -182,6 +181,7 @@ class BetterTable extends Module {
       return;
     }
 
+    let delta = new Delta().retain(range.index)
     delta.insert('\n')
     // insert table column
     delta = new Array(columns).fill('\n').reduce((memo, text) => {

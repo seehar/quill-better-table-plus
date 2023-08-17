@@ -15,7 +15,7 @@ module.exports = (env, argv) => {
   } else {
     entry = {
       'quill-better-table-plus.js': ['./src/quill-better-table-plus.js'],
-      'quill-better-table-plus': './src/assets/quill-better-table-plus.scss',
+      'quill-better-table-plus': './src/assets/quill-better-table-plus.less',
       'demo/demo.js': './demo/js/demo.js',
     }
     minimize = false
@@ -41,7 +41,7 @@ module.exports = (env, argv) => {
         'src': path.resolve(__dirname, './src'),
         'dist': path.resolve(__dirname, './dist'),
       },
-      extensions: ['.js', '.scss', '.html'],
+      extensions: ['.js', '.less', '.html'],
     },
 
     externals: {
@@ -79,12 +79,12 @@ module.exports = (env, argv) => {
         },
 
         {
-          test: /\.scss$/,
+          test: /\.less$/,
           use: [
             // fallback to style-loader in development
             !isProduction ? 'style-loader' : MiniCssExtractPlugin.loader,
             'css-loader',
-            'sass-loader',
+            'less-loader',
           ],
         },
 

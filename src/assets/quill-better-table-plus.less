@@ -1,5 +1,4 @@
-$primaryColor: #0589f3;
-
+@primaryColor: #0589f3;
 
 .ql-container .qlbt-selection-line {
   &.qlbt-selection-line-left {
@@ -10,7 +9,7 @@ $primaryColor: #0589f3;
       content: '';
       width: 5px;
       height: 5px;
-      background-color: $primaryColor;
+      background-color: @primaryColor;
       border-radius: 5px;
     }
   }
@@ -23,7 +22,7 @@ $primaryColor: #0589f3;
       content: '';
       width: 5px;
       height: 5px;
-      background-color: $primaryColor;
+      background-color: @primaryColor;
       border-radius: 5px;
     }
   }
@@ -133,7 +132,7 @@ table.quill-better-table {
     cursor: ew-resize;
 
     &:hover {
-      background-color: $primaryColor;
+      background-color: @primaryColor;
     }
 
     &::before {

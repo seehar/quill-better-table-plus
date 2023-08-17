@@ -373,8 +373,7 @@ TableColGroup.tagName = "colgroup"
 
 class TableContainer extends Container {
   static create() {
-    let node = super.create()
-    return node
+    return super.create()
   }
 
   constructor(scroll, domNode) {
