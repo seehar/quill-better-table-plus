@@ -25,7 +25,7 @@ import { ERROR_LIMIT } from "src/contants";
 const Module = Quill.import('core/module')
 const Delta = Quill.import('delta')
 
-class BetterTable extends Module {
+class BetterTablePlus extends Module {
   static register() {
     Quill.register(TableCol, true);
     Quill.register(TableColGroup, true);
@@ -34,7 +34,6 @@ class BetterTable extends Module {
     Quill.register(TableRow, true);
     Quill.register(TableBody, true);
     Quill.register(TableContainer, true);
-    Quill.register(TableViewWrapper, true);
     Quill.register(TableViewWrapper, true);
     // register customized Header，overwriting quill built-in Header
     // Quill.register('formats/header', Header, true);
@@ -323,7 +322,7 @@ class BetterTable extends Module {
   }
 }
 
-BetterTable.keyboardBindings = {
+BetterTablePlus.keyboardBindings = {
   'table-cell-line backspace': {
     key: 'Backspace',
     format: ['table-cell-line'],
@@ -492,4 +491,4 @@ function isInTableCell(current) {
     : false
 }
 
-export default BetterTable;
+export default BetterTablePlus;

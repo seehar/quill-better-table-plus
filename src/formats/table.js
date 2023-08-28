@@ -349,6 +349,14 @@ class TableCol extends Block {
     }, {})
   }
 
+  formats(value) {
+    const superFormats = super.formats()
+    if (value) {
+      this.domNode.setAttribute("width", value)
+    }
+    return superFormats
+  }
+
   format(name, value) {
     if (COL_ATTRIBUTES.indexOf(name) > -1) {
       this.domNode.setAttribute(`${name}`, value || COL_DEFAULT[name])
@@ -385,11 +393,26 @@ class TableContainer extends Container {
     setTimeout(() => {
       const colGroup = this.colGroup()
       if (!colGroup) return
+      const suffixSet = new Set()
       const tableWidth = colGroup.children.reduce((sumWidth, col) => {
-        sumWidth = sumWidth + parseInt(col.formats()[TableCol.blotName].width, 10)
+        const colWidth = col.formats()[TableCol.blotName].width
+        suffixSet.add(`${colWidth}`.endsWith("%"))
+        sumWidth = sumWidth + parseInt(colWidth, 10)
         return sumWidth
       }, 0)
-      this.domNode.style.width = `${tableWidth}px`
+
+      // 需要进行 100% 宽度格式化的场景
+      //    1. 全部列宽度都是非 % 结尾
+      //    2. 不全是 % 结尾
+      if (tableWidth > 0 && (suffixSet.size === 1 && suffixSet.has(false))) {
+        colGroup.children.reduce((_, col) => {
+          const colWidthReal = parseInt(col.formats()[TableCol.blotName].width, 10)
+          const colWidthRate = (colWidthReal / tableWidth * 100).toFixed(2)
+          col.formats(colWidthRate + "%")
+          return null
+        })
+      }
+      this.domNode.style.width = `100%`
     }, 0)
   }
 
