@@ -389,29 +389,52 @@ class TableContainer extends Container {
     this.updateTableWidth()
   }
 
+  // updateTableWidth() {
+  //   setTimeout(() => {
+  //     const colGroup = this.colGroup()
+  //     if (!colGroup) return
+  //     const suffixSet = new Set()
+  //     // const tableWidth = colGroup.children.reduce((sumWidth, col) => {
+  //     //   const colWidth = col.formats()[TableCol.blotName].width
+  //     //   suffixSet.add(`${colWidth}`.endsWith("%"))
+  //     //   sumWidth = sumWidth + parseInt(colWidth, 10)
+  //     //   return sumWidth
+  //     // }, 0)
+  //     const tableWidth = this.domNode.clientWidth
+  //     // console.log("tableWidth:", tableWidth)
+  //     console.log("tableWidth2:", tableWidth)
+  //
+  //     // 需要进行 100% 宽度格式化的场景
+  //     //    1. 全部列宽度都是非 % 结尾
+  //     //    2. 不全是 % 结尾
+  //     // if (tableWidth > 0 && (suffixSet.size === 1 && suffixSet.has(false))) {
+  //     //   colGroup.children.reduce((_, col) => {
+  //     //     const colWidthReal = parseInt(col.formats()[TableCol.blotName].width, 10)
+  //     //     const colWidthRate = (colWidthReal / tableWidth * 100).toFixed(2)
+  //     //     console.log(colWidthRate + "%")
+  //     //     col.formats(colWidthRate + "%")
+  //     //     return null
+  //     //   })
+  //     // }
+  //     this.domNode.style.width = `100%`
+  //   }, 0)
+  // }
+
   updateTableWidth() {
     setTimeout(() => {
       const colGroup = this.colGroup()
       if (!colGroup) return
-      const suffixSet = new Set()
-      const tableWidth = colGroup.children.reduce((sumWidth, col) => {
-        const colWidth = col.formats()[TableCol.blotName].width
-        suffixSet.add(`${colWidth}`.endsWith("%"))
-        sumWidth = sumWidth + parseInt(colWidth, 10)
-        return sumWidth
-      }, 0)
+      const tableWidth = this.domNode.clientWidth
 
       // 需要进行 100% 宽度格式化的场景
       //    1. 全部列宽度都是非 % 结尾
       //    2. 不全是 % 结尾
-      if (tableWidth > 0 && (suffixSet.size === 1 && suffixSet.has(false))) {
-        colGroup.children.reduce((_, col) => {
-          const colWidthReal = parseInt(col.formats()[TableCol.blotName].width, 10)
-          const colWidthRate = (colWidthReal / tableWidth * 100).toFixed(2)
-          col.formats(colWidthRate + "%")
-          return null
-        })
-      }
+      colGroup.children.reduce((_, col) => {
+        const colWidthRate = (col.domNode.clientWidth / tableWidth * 100).toFixed(2)
+        console.log(colWidthRate + "%")
+        col.formats(colWidthRate + "%")
+        return null
+      })
       this.domNode.style.width = `100%`
     }, 0)
   }

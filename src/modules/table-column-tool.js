@@ -115,10 +115,15 @@ export default class TableColumnTool {
       const existCells = Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell'))
       const colIndex = existCells.indexOf(cell)
       const colBlot = tableContainer.colGroup().children.at(colIndex)
+      const nextColBlot = colBlot.next
+      const nextCell = nextColBlot.domNode
+      const nextCellWidth = nextCell.clientWidth
 
       if (dragging) {
         colBlot.format('width', width0 + delta)
+        nextColBlot.format('width', nextCellWidth - delta)
         css(cell, { 'min-width': `${width0 + delta}px` })
+        css(nextCell, { 'min-width': `${nextCellWidth - delta}px` })
 
         x0 = 0
         x = 0
