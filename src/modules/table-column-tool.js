@@ -51,7 +51,7 @@ export default class TableColumnTool {
 
     for (let index = 0; index < Math.max(cellsNumber, existCells.length); index++) {
       let col = tableCols.at(index)
-      let colWidth = col && parseInt(col.formats()[col.statics.blotName].width, 10)
+      let colWidth = col && col.attributes.domNode.clientWidth
       // if cell already exist
       let toolCell = null
       if (!existCells[index]) {
@@ -115,10 +115,15 @@ export default class TableColumnTool {
       const existCells = Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell'))
       const colIndex = existCells.indexOf(cell)
       const colBlot = tableContainer.colGroup().children.at(colIndex)
+      const nextColBlot = colBlot.next
+      const nextCell = nextColBlot.domNode
+      const nextCellWidth = nextCell.clientWidth
 
       if (dragging) {
         colBlot.format('width', width0 + delta)
+        nextColBlot.format('width', nextCellWidth - delta)
         css(cell, { 'min-width': `${width0 + delta}px` })
+        css(nextCell, { 'min-width': `${nextCellWidth - delta}px` })
 
         x0 = 0
         x = 0
@@ -138,6 +143,7 @@ export default class TableColumnTool {
 
       const tableSelection = this.quill.getModule('better-table-plus').tableSelection
       tableSelection && tableSelection.clearSelection()
+      this.updateToolCells()
     }
 
     const handleMousedown = e => {

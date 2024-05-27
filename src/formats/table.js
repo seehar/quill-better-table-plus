@@ -349,6 +349,14 @@ class TableCol extends Block {
     }, {})
   }
 
+  formats(value) {
+    const superFormats = super.formats()
+    if (value) {
+      this.domNode.setAttribute("width", value)
+    }
+    return superFormats
+  }
+
   format(name, value) {
     if (COL_ATTRIBUTES.indexOf(name) > -1) {
       this.domNode.setAttribute(`${name}`, value || COL_DEFAULT[name])
@@ -385,11 +393,18 @@ class TableContainer extends Container {
     setTimeout(() => {
       const colGroup = this.colGroup()
       if (!colGroup) return
-      const tableWidth = colGroup.children.reduce((sumWidth, col) => {
-        sumWidth = sumWidth + parseInt(col.formats()[TableCol.blotName].width, 10)
-        return sumWidth
-      }, 0)
-      this.domNode.style.width = `${tableWidth}px`
+      const tableWidth = this.domNode.clientWidth
+
+      // 需要进行 100% 宽度格式化的场景
+      //    1. 全部列宽度都是非 % 结尾
+      //    2. 不全是 % 结尾
+      colGroup.children.reduce((_, col) => {
+        const colWidthRate = (col.domNode.clientWidth / tableWidth * 100).toFixed(2)
+        console.log(colWidthRate + "%")
+        col.formats(colWidthRate + "%")
+        return null
+      })
+      this.domNode.style.width = `100%`
     }, 0)
   }
 
