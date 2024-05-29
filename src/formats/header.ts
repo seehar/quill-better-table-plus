@@ -1,10 +1,12 @@
 import Quill from "quill"
 import { CELL_ATTRIBUTES, CELL_IDENTITY_KEYS, TableCell, TableCellLine } from './table'
+import type { default as BlockType} from "quill/blots/block";
 
-const Block = Quill.import("blots/block")
+const Block: BlockType = Quill.import("blots/block") as BlockType
 
 class Header extends Block {
-  static create(value) {
+  static create(value: string | Record<string, unknown> | undefined) {
+    if (value === undefined) return
     if (typeof value === 'string') {
       value = { value }
     }
