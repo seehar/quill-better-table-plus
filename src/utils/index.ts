@@ -1,4 +1,4 @@
-export function css(domNode, rules) {
+export function css(domNode, rules: Record<string, string>): void {
   if (typeof rules === 'object') {
     for (let prop in rules) {
       domNode.style[prop] = rules[prop]
@@ -12,7 +12,7 @@ export function css(domNode, rules) {
  * @param  {Element} container  container element
  * @return {Object}             an object with rect data
  */
-export function getRelativeRect(targetRect, container) {
+export function getRelativeRect(targetRect: object, container: Element) {
   let containerRect = container.getBoundingClientRect()
 
   return {
@@ -31,7 +31,7 @@ export function getRelativeRect(targetRect, container) {
  * @param  {Array} uselessKeys  keys of removed properties
  * @return {Object}             new Object without useless properties
  */
-export function _omit(obj, uselessKeys) {
+export function _omit(obj: object | undefined, uselessKeys: string[]) {
   return obj && Object.keys(obj).reduce((acc, key) => {
     return uselessKeys.includes(key) ?
       acc :
@@ -48,7 +48,7 @@ export function _omit(obj, uselessKeys) {
  * @param {Event} evt
  * @return {Array} an array of event.path
  */
-export function getEventComposedPath(evt) {
+export function getEventComposedPath(evt: Event) {
   let path
   // chrome, opera, safari, firefox
   path = evt.path || (evt.composedPath && evt.composedPath())
@@ -68,7 +68,7 @@ export function getEventComposedPath(evt) {
   return path
 }
 
-export function convertToHex(rgb) {
+export function convertToHex(rgb: string): string {
   const reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
   // if rgb
   if (/^(rgb|RGB)/.test(rgb)) {
@@ -76,7 +76,7 @@ export function convertToHex(rgb) {
     let hex = "#";
 
     for (let i = 0; i < 3; i++) {
-      hex += ("0" + Number(color[i]).toString(16)).slice(-2);
+      hex += ("0" + Number(color![i]).toString(16)).slice(-2);
     }
     return hex;
   } else if (reg.test(rgb)) {

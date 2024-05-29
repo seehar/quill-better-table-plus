@@ -1,4 +1,4 @@
-import QuillBetterTablePlus from 'src/quill-better-table-plus.js'
+import QuillBetterTablePlus from 'src/quill-better-table-plus.ts'
 // import better-table styles file
 import 'src/assets/quill-better-table-plus.less'
 

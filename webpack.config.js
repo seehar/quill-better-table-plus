@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production'
@@ -9,7 +10,7 @@ module.exports = (env, argv) => {
 
   if (env && env.minimize) {
     entry = {
-      'quill-better-table-plus.min.js': ['./src/quill-better-table-plus.js'],
+      'quill-better-table-plus.min.js': ['./src/quill-better-table-plus.ts'],
     }
     minimize = true
   } else {
@@ -41,7 +42,7 @@ module.exports = (env, argv) => {
         'src': path.resolve(__dirname, './src'),
         'dist': path.resolve(__dirname, './dist'),
       },
-      extensions: ['.js', '.less', '.html'],
+      extensions: ['.js', '.ts', '.less', '.html'],
     },
 
     externals: {
@@ -114,10 +115,18 @@ module.exports = (env, argv) => {
             },
           },
         },
+        {
+          test: /.ts$/,
+          use: {
+            loader: "ts-loader",
+          },
+          exclude: /(node_modules|bower_components)/,
+        },
       ],
     },
 
     plugins: [
+      new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         title: 'quill-better-table',
         template: './demo/demo.html',

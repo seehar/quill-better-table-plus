@@ -6,7 +6,7 @@ import TableOperationMenu from './modules/table-operation-menu'
 // import table node matchers
 import { matchTable, matchTableCell, matchTableHeader } from './utils/node-matchers'
 
-import { getEventComposedPath } from './utils/index'
+import { getEventComposedPath } from './utils'
 import {
   cellId,
   rowId,
@@ -19,8 +19,8 @@ import {
   TableRow,
   TableViewWrapper,
 } from './formats/table';
-import { getColToolCellIndexByBoundary, getColToolCellIndexesByBoundary } from "src/utils/table-util";
-import { ERROR_LIMIT } from "src/contants";
+import { getColToolCellIndexByBoundary, getColToolCellIndexesByBoundary } from "./utils/table-util";
+import { ERROR_LIMIT } from "./contants";
 
 const Module = Quill.import('core/module')
 const Delta = Quill.import('delta')

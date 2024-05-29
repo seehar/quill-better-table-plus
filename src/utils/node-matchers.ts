@@ -1,10 +1,15 @@
 import Quill from 'quill'
 import { _omit, convertToHex } from './index'
+import type Op from "quill-delta/src/Op"
+// import Delta from "quill-delta/src/Delta"
+// import DeltaType = require("quill-delta/src/Delta")
+// import Delta from 'quill-delta/src/Delta'
+import type DeltaType from "quill-delta/dist/Delta"
 
 const Delta = Quill.import('delta')
 
 // rebuild delta
-export function matchTableCell(node, delta, scroll) {
+export function matchTableCell(node, delta: DeltaType, scroll) {
   const row = node.parentNode;
   const table = row.parentNode.tagName === 'TABLE'
     ? row.parentNode
@@ -25,7 +30,7 @@ export function matchTableCell(node, delta, scroll) {
     return delta
   }
 
-  delta = delta.reduce((newDelta, op) => {
+  delta = delta.reduce((newDelta, op: Op) => {
     if (op.insert && typeof op.insert === 'string') {
       const lines = []
       let insertStr = op.insert
@@ -57,7 +62,7 @@ export function matchTableCell(node, delta, scroll) {
     return newDelta
   }, new Delta())
 
-  return delta.reduce((newDelta, op) => {
+  return delta.reduce((newDelta, op: Op) => {
     if (op.insert && typeof op.insert === 'string' &&
       op.insert.startsWith('\n')) {
       newDelta.insert(op.insert, Object.assign(
@@ -87,7 +92,7 @@ export function matchTableCell(node, delta, scroll) {
 }
 
 // replace th tag with td tag
-export function matchTableHeader(node, delta, scroll) {
+export function matchTableHeader(node, delta: DeltaType, scroll) {
   const row = node.parentNode;
   const table = row.parentNode.tagName === 'TABLE'
     ? row.parentNode
@@ -107,9 +112,9 @@ export function matchTableHeader(node, delta, scroll) {
     return delta
   }
 
-  delta = delta.reduce((newDelta, op) => {
+  delta = delta.reduce((newDelta, op: Op) => {
     if (op.insert && typeof op.insert === 'string') {
-      const lines = []
+      const lines: string[] = []
       let insertStr = op.insert
       let start = 0
       for (let i = 0; i < op.insert.length; i++) {
@@ -144,7 +149,7 @@ export function matchTableHeader(node, delta, scroll) {
     return newDelta
   }, new Delta())
 
-  return delta.reduce((newDelta, op) => {
+  return delta.reduce((newDelta, op: Op) => {
     if (op.insert && typeof op.insert === 'string' &&
       op.insert.startsWith('\n')) {
       newDelta.insert(op.insert, Object.assign(
@@ -163,7 +168,7 @@ export function matchTableHeader(node, delta, scroll) {
 }
 
 // supplement colgroup and col
-export function matchTable(node, delta, scroll) {
+export function matchTable(node, delta: DeltaType) {
   let newColDelta = new Delta()
   const topRow = node.querySelector('tr')
 
@@ -192,7 +197,7 @@ export function matchTable(node, delta, scroll) {
     if (colsNumber === 0) return newColDelta.concat(delta)
 
     let lastNumber = 0
-    return delta.reduce((finalDelta, op) => {
+    return delta.reduce((finalDelta, op: Op) => {
       finalDelta.insert(op.insert, op.attributes)
 
       if (op.attributes && op.attributes['table-col']) {

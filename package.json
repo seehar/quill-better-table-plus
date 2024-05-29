@@ -1,6 +1,6 @@
 {
   "name": "quill-better-table-plus",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Module for better table in Quill, more useful features are supported.",
   "main": "dist/quill-better-table-plus.js",
   "scripts": {
@@ -35,9 +35,13 @@
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
+    "@types/deep-equal": "^1.0.4",
+    "@types/extend": "^3.0.4",
+    "@types/quill": "^2.0.14",
     "babel-eslint": "^7.2.1",
     "babel-loader": "^8.0.5",
     "babel-plugin-istanbul": "^5.1.1",
+    "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^2.1.1",
     "eslint": "^3.19.0",
     "file-loader": "^3.0.1",
@@ -48,6 +52,8 @@
     "mini-css-extract-plugin": "^0.5.0",
     "quill": "^2.0.0-dev.3",
     "style-loader": "^0.23.1",
+    "ts-loader": "^8.2.0",
+    "typescript": "^5.4.5",
     "url-loader": "^1.1.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
