@@ -400,11 +400,10 @@ class TableContainer extends Container {
       //    2. 不全是 % 结尾
       colGroup.children.reduce((_, col) => {
         const colWidthRate = (col.domNode.clientWidth / tableWidth * 100).toFixed(2)
-        console.log(colWidthRate + "%")
         col.formats(colWidthRate + "%")
         return null
       })
-      this.domNode.style.width = `100%`
+      // this.domNode.style.width = `100%`
     }, 0)
   }
 
@@ -459,7 +458,7 @@ class TableContainer extends Container {
 
     modifiedCells.forEach(cell => {
       const cellColspan = parseInt(cell.formats().colspan, 10)
-      const cellWidth = parseInt(cell.formats().width, 10)
+      // const cellWidth = parseInt(cell.formats().width, 10)
       cell.format('colspan', cellColspan - delIndexes.length)
     })
 

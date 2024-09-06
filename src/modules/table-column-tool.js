@@ -30,11 +30,13 @@ export default class TableColumnTool {
     })
   }
 
-  createToolCell() {
+  createToolCell(isClassName = true) {
     const toolCell = document.createElement('div')
     toolCell.classList.add('qlbt-col-tool-cell')
     const resizeHolder = document.createElement('div')
-    resizeHolder.classList.add('qlbt-col-tool-cell-holder')
+    if (isClassName) {
+      resizeHolder.classList.add('qlbt-col-tool-cell-holder')
+    }
     css(toolCell, {
       'height': `${COL_TOOL_CELL_HEIGHT}px`,
     })
@@ -46,29 +48,36 @@ export default class TableColumnTool {
     const tableContainer = Quill.find(this.table)
     const CellsInFirstRow = tableContainer.children.tail.children.head.children
     const tableCols = tableContainer.colGroup().children
+
+    const tableWidth = tableContainer.children.tail.domNode.clientWidth
+
     const cellsNumber = computeCellsNumber(CellsInFirstRow)
     let existCells = Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell'))
 
-    for (let index = 0; index < Math.max(cellsNumber, existCells.length); index++) {
+    const totalCount = Math.max(cellsNumber, existCells.length)
+    for (let index = 0; index < totalCount; index++) {
       let col = tableCols.at(index)
       let colWidth = col && col.attributes.domNode.clientWidth
       // if cell already exist
       let toolCell = null
       if (!existCells[index]) {
-        toolCell = this.createToolCell()
+        toolCell = this.createToolCell(index + 1 !== totalCount)
         this.domNode.appendChild(toolCell)
         this.addColCellHolderHandler(toolCell)
         // set tool cell min-width
+        const colWidthRate = (colWidth / tableWidth * 100).toFixed(2)
         css(toolCell, {
-          'min-width': `${colWidth}px`,
+          'min-width': `${colWidthRate}%`,
         })
       } else if (existCells[index] && index >= cellsNumber) {
         existCells[index].remove()
       } else {
         toolCell = existCells[index]
+        const colWidthRate = (colWidth / tableWidth * 100).toFixed(2)
+
         // set tool cell min-width
         css(toolCell, {
-          'min-width': `${colWidth}px`,
+          'min-width': `${colWidthRate}%`,
         })
       }
     }
@@ -169,7 +178,9 @@ export default class TableColumnTool {
       width0 = cellRect.width
       $holder.classList.add('dragging')
     }
-    $holder.addEventListener('mousedown', handleMousedown, false)
+    if ($holder !== null) {
+      $holder.addEventListener('mousedown', handleMousedown, false)
+    }
   }
 
   colToolCells() {
