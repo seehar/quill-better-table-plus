@@ -1,15 +1,36 @@
 {
   "name": "quill-better-table-plus",
-  "version": "0.1.5",
+  "version": "0.1.8",
   "description": "Module for better table in Quill, more useful features are supported.",
-  "main": "dist/quill-better-table-plus.js",
+  "main": "dist/quill-better-table-plus.cjs",
+  "module": "dist/quill-better-table-plus.esm.js",
+  "types": "dist/quill-better-table-plus.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/quill-better-table-plus.d.ts",
+      "import": "./dist/quill-better-table-plus.esm.js",
+      "require": "./dist/quill-better-table-plus.cjs"
+    },
+    "./dist/quill-better-table-plus.css": "./dist/quill-better-table-plus.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "webpack-dev-server --config webpack.config.js --mode=development",
-    "build": "npm run build:normal && npm run build:minimize",
-    "build:normal": "webpack --config webpack.config.js --mode=production",
+    "build": "npm run build:esm && npm run build:cjs && npm run build:umd && npm run build:minimize && npm run post-build",
+    "build:esm": "webpack --config webpack.config.js --mode=production --env.format=esm",
+    "build:cjs": "webpack --config webpack.config.js --mode=production --env.format=cjs",
+    "build:umd": "webpack --config webpack.config.js --mode=production --env.format=umd",
     "build:minimize": "webpack --config webpack.config.js --mode=production --env.minimize",
-    "lint": "eslint --fix --ext js,es6 src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "post-build": "node scripts/post-build.cjs",
+    "test": "npm run test:cjs && npm run test:esm && npm run test:bundler",
+    "test:cjs": "node test/cjs-test.js",
+    "test:esm": "node test/esm-test.mjs",
+    "test:bundler": "node test/bundler-compatibility.js",
+    "lint": "eslint --fix --ext js,es6 src"
   },
   "repository": {
     "type": "git",
@@ -20,7 +41,9 @@
     "quilljs",
     "table",
     "multiline",
-    "quilltable"
+    "quilltable",
+    "esm",
+    "commonjs"
   ],
   "author": "seehar",
   "license": "MIT",
@@ -30,7 +53,7 @@
   "homepage": "https://github.com/seehar/quill-better-table-plus#readme",
   "dependencies": {},
   "engines": {
-    "node": ">=12.0.0 <13.0.0"
+    "node": ">=14.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",

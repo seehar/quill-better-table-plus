@@ -5,13 +5,59 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production'
-  let entry, minimize
+  let entry, minimize, output, filename
 
   if (env && env.minimize) {
     entry = {
       'quill-better-table-plus.min.js': ['./src/quill-better-table-plus.js'],
     }
     minimize = true
+    filename = '[name]'
+    output = {
+      filename,
+      library: 'quillBetterTablePlus',
+      libraryExport: 'default',
+      libraryTarget: 'umd',
+      path: path.resolve(__dirname, './dist/'),
+    }
+  } else if (env && env.format === 'esm') {
+    entry = {
+      'quill-better-table-plus.esm.js': ['./src/quill-better-table-plus.js'],
+    }
+    minimize = false
+    filename = '[name]'
+    output = {
+      filename,
+      library: 'quillBetterTablePlus',
+      libraryTarget: 'umd',
+      globalObject: 'this',
+      path: path.resolve(__dirname, './dist/'),
+    }
+  } else if (env && env.format === 'cjs') {
+    entry = {
+      'quill-better-table-plus.cjs': ['./src/quill-better-table-plus.js'],
+    }
+    minimize = false
+    filename = '[name]'
+    output = {
+      filename,
+      library: 'quillBetterTablePlus',
+      libraryTarget: 'commonjs2',
+      path: path.resolve(__dirname, './dist/'),
+    }
+  } else if (env && env.format === 'umd') {
+    entry = {
+      'quill-better-table-plus.js': ['./src/quill-better-table-plus.js'],
+    }
+    minimize = false
+    filename = '[name]'
+    output = {
+      filename,
+      library: 'quillBetterTablePlus',
+      libraryExport: 'default',
+      libraryTarget: 'umd',
+      path: path.resolve(__dirname, './dist/'),
+    }
   } else {
     entry = {
       'quill-better-table-plus.js': ['./src/quill-better-table-plus.js'],
@@ -19,22 +65,24 @@ module.exports = (env, argv) => {
       'demo/demo.js': './demo/js/demo.js',
     }
     minimize = false
+    filename = '[name]'
+    output = {
+      filename,
+      library: 'quillBetterTablePlus',
+      libraryExport: 'default',
+      libraryTarget: 'umd',
+      path: path.resolve(__dirname, './dist/'),
+    }
   }
 
-  return {
+  const config = {
     entry,
 
     optimization: {
       minimize,
     },
 
-    output: {
-      filename: '[name]',
-      library: 'quillBetterTablePlus',
-      libraryExport: 'default',
-      libraryTarget: 'umd',
-      path: path.resolve(__dirname, './dist/'),
-    },
+    output,
 
     resolve: {
       alias: {
@@ -141,4 +189,6 @@ module.exports = (env, argv) => {
       openPage: "demo/demo.html",
     },
   }
+
+  return config;
 }
