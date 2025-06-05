@@ -37,6 +37,31 @@ You can install `quill-better-table-plus` via npm:
 npm install quill-better-table-plus
 ```
 
+## Module Format Support
+
+This package supports multiple module formats for maximum compatibility:
+
+- **ESM (ECMAScript Modules)**: `import QuillBetterTablePlus from 'quill-better-table-plus'`
+- **CommonJS**: `const QuillBetterTablePlus = require('quill-better-table-plus')`
+- **UMD**: Can be used directly in browsers via `<script>` tags
+
+### ESM Support (v0.1.7+)
+
+Starting from version 0.1.7, this package provides proper ESM support that resolves the "Module is not ESM" warning in modern bundlers like Vite, Webpack 5, and others.
+
+```javascript
+// Modern ESM import (recommended)
+import QuillBetterTablePlus from 'quill-better-table-plus';
+
+// Named import also available
+import { QuillBetterTablePlus } from 'quill-better-table-plus';
+```
+
+## Node.js Compatibility
+
+- **Node.js**: 14.0.0 or higher
+- **Previous versions**: If you need to use with Node.js 12.x, please use version 0.1.5 or earlier
+
 # Use
 
 Import `Quill` and style dependencies
@@ -109,7 +134,7 @@ feedback and contributions.
 Feel free to contribute code and submit issues. If you find any bugs, or have suggestions for improvements, please
 create an issue or submit a pull request.
 
-> Developer note: node version: `12.x`, e.g. `12.22.12`.
+> Developer note: Node.js version: `14.x` or higher recommended for development. The package supports Node.js 14.0.0+.
 
 # License
 

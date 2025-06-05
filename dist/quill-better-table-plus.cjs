@@ -1,14 +1,5 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("quill"));
-	else if(typeof define === 'function' && define.amd)
-		define(["quill"], factory);
-	else if(typeof exports === 'object')
-		exports["quillBetterTablePlus"] = factory(require("quill"));
-	else
-		root["quillBetterTablePlus"] = factory(root["Quill"]);
-})(window, function(__WEBPACK_EXTERNAL_MODULE__0__) {
-return /******/ (function(modules) { // webpackBootstrap
+module.exports =
+/******/ (function(modules) { // webpackBootstrap
 /******/ 	function hotDisposeChunk(chunkId) {
 /******/ 		delete installedChunks[chunkId];
 /******/ 	}
@@ -73,7 +64,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "80dbc56523ef4aa861b8";
+/******/ 	var hotCurrentHash = "e4eed793ae75a4c1d6a8";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -871,7 +862,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__0__;
+module.exports = require("quill");
 
 /***/ }),
 /* 1 */
@@ -3126,5 +3117,4 @@ function isInTableCell(current) {
 /* harmony default export */ var quill_better_table_plus = __webpack_exports__["default"] = (quill_better_table_plus_BetterTablePlus);
 
 /***/ })
-/******/ ])["default"];
-});
+/******/ ]);
