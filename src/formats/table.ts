@@ -1,46 +1,56 @@
 import Quill from "quill"
 import { getRelativeRect } from '../utils'
 import Header from './header'
-import { ERROR_LIMIT } from "src/contants";
+import { ERROR_LIMIT } from "../contants"
 
-const Break = Quill.import("blots/break")
-const Block = Quill.import("blots/block")
-const Container = Quill.import("blots/container")
+const Break = Quill.import("blots/break") as any
+const Block = Quill.import("blots/block") as any
+const Container = Quill.import("blots/container") as any
 
 const COL_ATTRIBUTES = ["width"]
-const COL_DEFAULT = {
+const COL_DEFAULT: Record<string, any> = {
   width: 100,
 }
 const CELL_IDENTITY_KEYS = ["row", "cell"]
 const CELL_ATTRIBUTES = ["rowspan", "colspan"]
-const CELL_DEFAULT = {
+const CELL_DEFAULT: Record<string, any> = {
   rowspan: 1,
   colspan: 1,
 }
 
+interface CellValue {
+  row?: string
+  cell?: string
+  rowspan?: string | number
+  colspan?: string | number
+  'cell-bg'?: string
+  width?: string | number
+  value?: any
+}
+
 class TableCellLine extends Block {
-  static create(value) {
-    const node = super.create(value)
+  static create(value: CellValue) {
+    const node = super.create(value) as HTMLElement
 
     CELL_IDENTITY_KEYS.forEach(key => {
-      let identityMaker = key === 'row'
+      const identityMaker = key === 'row'
         ? rowId : cellId
-      node.setAttribute(`data-${key}`, value[key] || identityMaker())
+      node.setAttribute(`data-${key}`, (value as any)[key] || identityMaker())
     })
 
     CELL_ATTRIBUTES.forEach(attrName => {
-      node.setAttribute(`data-${attrName}`, value[attrName] || CELL_DEFAULT[attrName])
+      node.setAttribute(`data-${attrName}`, (value as any)[attrName] || CELL_DEFAULT[attrName])
     })
 
-    if (value['cell-bg']) {
-      node.setAttribute('data-cell-bg', value['cell-bg'])
+    if ((value as any)['cell-bg']) {
+      node.setAttribute('data-cell-bg', (value as any)['cell-bg'])
     }
 
     return node
   }
 
-  static formats(domNode) {
-    const formats = {}
+  static formats(domNode: HTMLElement) {
+    const formats: Record<string, any> = {}
 
     return CELL_ATTRIBUTES.concat(CELL_IDENTITY_KEYS).concat(['cell-bg']).reduce((formats, attribute) => {
       if (domNode.hasAttribute(`data-${attribute}`)) {
@@ -50,7 +60,7 @@ class TableCellLine extends Block {
     }, formats)
   }
 
-  format(name, value) {
+  format(name: string, value: any) {
     if (CELL_ATTRIBUTES.concat(CELL_IDENTITY_KEYS).indexOf(name) > -1) {
       if (value) {
         this.domNode.setAttribute(`data-${name}`, value)
@@ -64,8 +74,9 @@ class TableCellLine extends Block {
         this.domNode.removeAttribute('data-cell-bg')
       }
     } else if (name === 'header') {
-      if (!value) return;
-      const { row, cell, rowspan, colspan } = TableCellLine.formats(this.domNode)
+      if (!value) return
+      const formats = TableCellLine.formats(this.domNode)
+      const { row, cell, rowspan, colspan } = formats
       super.format(name, {
         value,
         row,
@@ -78,9 +89,7 @@ class TableCellLine extends Block {
     }
   }
 
-  optimize(context) {
-    // cover shadowBlot's wrap call, pass params parentBlot initialize
-    // needed
+  optimize(context: any) {
     const rowId = this.domNode.getAttribute('data-row')
     const rowspan = this.domNode.getAttribute('data-rowspan')
     const colspan = this.domNode.getAttribute('data-colspan')
@@ -108,11 +117,11 @@ TableCellLine.tagName = "P"
 
 class TableCell extends Container {
   checkMerge() {
-    if (super.checkMerge() && this.next.children.head != null) {
-      const thisHead = this.children.head.formats()[this.children.head.statics.blotName]
-      const thisTail = this.children.tail.formats()[this.children.tail.statics.blotName]
-      const nextHead = this.next.children.head.formats()[this.next.children.head.statics.blotName]
-      const nextTail = this.next.children.tail.formats()[this.next.children.tail.statics.blotName]
+    if (super.checkMerge() && (this as any).next.children.head != null) {
+      const thisHead = (this as any).children.head.formats()[(this as any).children.head.statics.blotName]
+      const thisTail = (this as any).children.tail.formats()[(this as any).children.tail.statics.blotName]
+      const nextHead = (this as any).next.children.head.formats()[(this as any).next.children.head.statics.blotName]
+      const nextTail = (this as any).next.children.tail.formats()[(this as any).next.children.tail.statics.blotName]
       return (
         thisHead.cell === thisTail.cell &&
         thisHead.cell === nextHead.cell &&
@@ -122,26 +131,26 @@ class TableCell extends Container {
     return false
   }
 
-  static create(value) {
-    const node = super.create(value)
-    node.setAttribute("data-row", value.row)
+  static create(value: CellValue) {
+    const node = super.create(value) as HTMLElement
+    node.setAttribute("data-row", (value as any).row)
 
     CELL_ATTRIBUTES.forEach(attrName => {
-      if (value[attrName]) {
-        node.setAttribute(attrName, value[attrName])
+      if ((value as any)[attrName]) {
+        node.setAttribute(attrName, (value as any)[attrName])
       }
     })
 
-    if (value['cell-bg']) {
-      node.setAttribute('data-cell-bg', value['cell-bg'])
-      node.style.backgroundColor = value['cell-bg']
+    if ((value as any)['cell-bg']) {
+      node.setAttribute('data-cell-bg', (value as any)['cell-bg'])
+      node.style.backgroundColor = (value as any)['cell-bg']
     }
 
     return node
   }
 
-  static formats(domNode) {
-    const formats = {}
+  static formats(domNode: HTMLElement) {
+    const formats: Record<string, any> = {}
 
     if (domNode.hasAttribute("data-row")) {
       formats.row = domNode.getAttribute("data-row")
@@ -168,7 +177,7 @@ class TableCell extends Container {
   }
 
   formats() {
-    const formats = {}
+    const formats: Record<string, any> = {}
 
     if (this.domNode.hasAttribute("data-row")) {
       formats.row = this.domNode.getAttribute("data-row")
@@ -187,7 +196,7 @@ class TableCell extends Container {
     }, formats)
   }
 
-  toggleAttribute(name, value) {
+  toggleAttribute(name: string, value: any) {
     if (value) {
       this.domNode.setAttribute(name, value)
     } else {
@@ -195,13 +204,13 @@ class TableCell extends Container {
     }
   }
 
-  formatChildren(name, value) {
-    this.children.forEach(child => {
+  formatChildren(name: string, value: any) {
+    this.children.forEach((child: any) => {
       child.format(name, value)
     })
   }
 
-  format(name, value) {
+  format(name: string, value: any) {
     if (CELL_ATTRIBUTES.indexOf(name) > -1) {
       this.toggleAttribute(name, value)
       this.formatChildren(name, value)
@@ -222,7 +231,7 @@ class TableCell extends Container {
     }
   }
 
-  optimize(context) {
+  optimize(context: any) {
     const rowId = this.domNode.getAttribute("data-row")
 
     if (this.statics.requiredContainer &&
@@ -255,11 +264,11 @@ TableCell.tagName = "TD"
 
 class TableRow extends Container {
   checkMerge() {
-    if (super.checkMerge() && this.next.children.head != null) {
-      const thisHead = this.children.head.formats()
-      const thisTail = this.children.tail.formats()
-      const nextHead = this.next.children.head.formats()
-      const nextTail = this.next.children.tail.formats()
+    if (super.checkMerge() && (this as any).next.children.head != null) {
+      const thisHead = (this as any).children.head.formats()
+      const thisTail = (this as any).children.tail.formats()
+      const nextHead = (this as any).next.children.head.formats()
+      const nextTail = (this as any).next.children.tail.formats()
 
       return (
         thisHead.row === thisTail.row &&
@@ -270,14 +279,14 @@ class TableRow extends Container {
     return false
   }
 
-  static create(value) {
-    const node = super.create(value)
-    node.setAttribute("data-row", value.row)
+  static create(value: CellValue) {
+    const node = super.create(value) as HTMLElement
+    node.setAttribute("data-row", (value as any).row)
     return node
   }
 
   formats() {
-    return ["row"].reduce((formats, attrName) => {
+    return ["row"].reduce((formats: Record<string, any>, attrName) => {
       if (this.domNode.hasAttribute(`data-${attrName}`)) {
         formats[attrName] = this.domNode.getAttribute(`data-${attrName}`)
       }
@@ -285,8 +294,7 @@ class TableRow extends Container {
     }, {})
   }
 
-  optimize(context) {
-    // optimize function of ShadowBlot
+  optimize(context: any) {
     if (
       this.statics.requiredContainer &&
       !(this.parent instanceof this.statics.requiredContainer)
@@ -294,18 +302,21 @@ class TableRow extends Container {
       this.wrap(this.statics.requiredContainer.blotName)
     }
 
-    // optimize function of ParentBlot
-    // note: modified this optimize function because
-    // TableRow should not be removed when the length of its children was 0
     this.enforceAllowedChildren()
-    if (this.uiNode != null && this.uiNode !== this.domNode.firstChild) {
-      this.domNode.insertBefore(this.uiNode, this.domNode.firstChild)
+    if ((this as any).uiNode != null && (this as any).uiNode !== this.domNode.firstChild) {
+      this.domNode.insertBefore((this as any).uiNode, this.domNode.firstChild)
     }
 
-    // optimize function of ContainerBlot
-    if (this.children.length > 0 && this.next != null && this.checkMerge()) {
-      this.next.moveChildren(this)
-      this.next.remove()
+if (
+      this.children.length > 0 &&
+      (this as any).next != null &&
+      this.checkMerge()
+    ) {
+      const next = this.next as any
+      if (next && next.moveChildren && next.children) {
+        next.moveChildren(this)
+        next.remove()
+      }
     }
   }
 
@@ -331,16 +342,16 @@ TableBody.blotName = "table-body"
 TableBody.tagName = "TBODY"
 
 class TableCol extends Block {
-  static create(value) {
-    let node = super.create(value)
+  static create(value: any) {
+    const node = super.create(value) as HTMLElement
     COL_ATTRIBUTES.forEach(attrName => {
       node.setAttribute(`${attrName}`, value[attrName] || COL_DEFAULT[attrName])
     })
     return node
   }
 
-  static formats(domNode) {
-    return COL_ATTRIBUTES.reduce((formats, attribute) => {
+  static formats(domNode: HTMLElement) {
+    return COL_ATTRIBUTES.reduce((formats: Record<string, any>, attribute) => {
       if (domNode.hasAttribute(`${attribute}`)) {
         formats[attribute] =
           domNode.getAttribute(`${attribute}`) || undefined
@@ -349,7 +360,7 @@ class TableCol extends Block {
     }, {})
   }
 
-  formats(value) {
+  formats(value?: any) {
     const superFormats = super.formats()
     if (value) {
       this.domNode.setAttribute("width", value)
@@ -357,7 +368,7 @@ class TableCol extends Block {
     return superFormats
   }
 
-  format(name, value) {
+  format(name: string, value: any) {
     if (COL_ATTRIBUTES.indexOf(name) > -1) {
       this.domNode.setAttribute(`${name}`, value || COL_DEFAULT[name])
     } else {
@@ -380,11 +391,11 @@ TableColGroup.blotName = "table-col-group"
 TableColGroup.tagName = "colgroup"
 
 class TableContainer extends Container {
-  static create() {
-    return super.create()
+  static create(value: any) {
+    return super.create(value)
   }
 
-  constructor(scroll, domNode) {
+  constructor(scroll: any, domNode: any) {
     super(scroll, domNode)
     this.updateTableWidth()
   }
@@ -395,33 +406,29 @@ class TableContainer extends Container {
       if (!colGroup) return
       const tableWidth = this.domNode.clientWidth
 
-      // 需要进行 100% 宽度格式化的场景
-      //    1. 全部列宽度都是非 % 结尾
-      //    2. 不全是 % 结尾
-      colGroup.children.reduce((_, col) => {
+      colGroup.children.reduce((_: any, col: any) => {
         const colWidthRate = (col.domNode.clientWidth / tableWidth * 100).toFixed(2)
         col.formats(colWidthRate + "%")
         return null
       })
-      // this.domNode.style.width = `100%`
     }, 0)
   }
 
-  cells(column) {
-    return this.rows().map(row => row.children.at(column))
+  cells(column: number) {
+    return this.rows().map((row: any) => row.children.at(column))
   }
 
   colGroup() {
     return this.children.head
   }
 
-  deleteColumns(compareRect, delIndexes = [], editorWrapper) {
-    const [body] = this.descendants(TableBody)
+  deleteColumns(compareRect: any, delIndexes: number[] = [], editorWrapper: HTMLElement) {
+    const [body] = this.descendants(TableBody) as [TableBody]
     if (body == null || body.children.head == null) return
 
-    const tableCells = this.descendants(TableCell)
-    const removedCells = []
-    const modifiedCells = []
+    const tableCells = this.descendants(TableCell) as TableCell[]
+    const removedCells: TableCell[] = []
+    const modifiedCells: TableCell[] = []
 
     tableCells.forEach(cell => {
       const cellRect = getRelativeRect(
@@ -447,7 +454,6 @@ class TableContainer extends Container {
       return true
     }
 
-    // remove the matches column tool cell
     delIndexes.forEach((delIndex) => {
       this.colGroup().children.at(delIndexes[0]).remove()
     })
@@ -458,25 +464,22 @@ class TableContainer extends Container {
 
     modifiedCells.forEach(cell => {
       const cellColspan = parseInt(cell.formats().colspan, 10)
-      // const cellWidth = parseInt(cell.formats().width, 10)
       cell.format('colspan', cellColspan - delIndexes.length)
     })
 
     this.updateTableWidth()
   }
 
-  deleteRow(compareRect, editorWrapper) {
-    const [body] = this.descendants(TableBody)
+  deleteRow(compareRect: any, editorWrapper: HTMLElement) {
+    const [body] = this.descendants(TableBody) as [TableBody]
     if (body == null || body.children.head == null) return
 
-    const tableCells = this.descendants(TableCell)
-    const tableRows = this.descendants(TableRow)
-    const removedCells = []  // cells to be removed
-    const modifiedCells = [] // cells to be modified
-    const fallCells = []     // cells to fall into next row
+    const tableCells = this.descendants(TableCell) as TableCell[]
+    const tableRows = this.descendants(TableRow) as TableRow[]
+    const removedCells: TableCell[] = []
+    const modifiedCells: TableCell[] = []
+    const fallCells: TableCell[] = []
 
-    // compute rows to remove
-    // bugfix: #21 There will be a empty tr left if delete the last row of a table
     const removedRows = tableRows.filter(row => {
       const rowRect = getRelativeRect(
         row.domNode.getBoundingClientRect(),
@@ -515,9 +518,8 @@ class TableContainer extends Container {
       return
     }
 
-    // compute length of removed rows
-    const removedRowsLength = this.rows().reduce((sum, row) => {
-      let rowRect = getRelativeRect(
+    const removedRowsLength = this.rows().reduce((sum: number, row: any) => {
+      const rowRect = getRelativeRect(
         row.domNode.getBoundingClientRect(),
         editorWrapper
       )
@@ -531,16 +533,15 @@ class TableContainer extends Container {
       return sum
     }, 0)
 
-    // it must excute before the table layout changed with other operation
     fallCells.forEach(cell => {
       const cellRect = getRelativeRect(
         cell.domNode.getBoundingClientRect(),
         editorWrapper
       )
-      const nextRow = cell.parent.next
+      const nextRow = (cell.parent as TableRow).next
       const cellsInNextRow = nextRow.children
 
-      const refCell = cellsInNextRow.reduce((ref, compareCell) => {
+      const refCell = cellsInNextRow.reduce((ref: any, compareCell: any) => {
         const compareRect = getRelativeRect(
           compareCell.domNode.getBoundingClientRect(),
           editorWrapper
@@ -564,19 +565,18 @@ class TableContainer extends Container {
       cell.format("rowspan", cellRowspan - removedRowsLength)
     })
 
-    // remove selected rows
-    removedRows.forEach(row => row.remove())
+    removedRows.forEach((row: any) => row.remove())
   }
 
   tableDestroy() {
-    const quill = Quill.find(this.scroll.domNode.parentNode)
+    const quill = Quill.find(this.scroll.domNode.parentNode) as any
     const tableModule = quill.getModule("better-table-plus")
     this.remove()
     tableModule.hideTableTools()
     quill.update(Quill.sources.USER)
   }
 
-  insertCell(tableRow, ref) {
+  insertCell(tableRow: TableRow, ref: any) {
     const id = cellId()
     const rId = tableRow.formats().row
     const tableCell = this.scroll.create(
@@ -598,16 +598,16 @@ class TableContainer extends Container {
     }
   }
 
-  insertColumn(compareRect, colIndex, isRight = true, editorWrapper) {
-    const [body] = this.descendants(TableBody)
-    const [tableColGroup] = this.descendants(TableColGroup)
-    const tableCols = this.descendants(TableCol)
-    let addAsideCells = []
-    let modifiedCells = []
-    let affectedCells = []
+  insertColumn(compareRect: any, colIndex: number, isRight = true, editorWrapper: HTMLElement) {
+    const [body] = this.descendants(TableBody) as [TableBody]
+    const [tableColGroup] = this.descendants(TableColGroup) as [TableColGroup]
+    const tableCols = this.descendants(TableCol) as TableCol[]
+    const addAsideCells: TableCell[] = []
+    const modifiedCells: TableCell[] = []
+    const affectedCells: TableCell[] = []
 
     if (body == null || body.children.head == null) return
-    const tableCells = this.descendants(TableCell)
+    const tableCells = this.descendants(TableCell) as TableCell[]
     tableCells.forEach(cell => {
       const cellRect = getRelativeRect(
         cell.domNode.getBoundingClientRect(),
@@ -616,28 +616,20 @@ class TableContainer extends Container {
 
       if (isRight) {
         if (Math.abs(cellRect.x1 - compareRect.x1) < ERROR_LIMIT) {
-          // the right of selected boundary equal to the right of table cell,
-          // add a new table cell right aside this table cell
           addAsideCells.push(cell)
         } else if (
           compareRect.x1 - cellRect.x > ERROR_LIMIT &&
           compareRect.x1 - cellRect.x1 < -ERROR_LIMIT
         ) {
-          // the right of selected boundary is inside this table cell
-          // colspan of this table cell will increase 1
           modifiedCells.push(cell)
         }
       } else {
         if (Math.abs(cellRect.x - compareRect.x) < ERROR_LIMIT) {
-          // left of selected boundary equal to left of table cell,
-          // add a new table cell left aside this table cell
           addAsideCells.push(cell)
         } else if (
           compareRect.x - cellRect.x > ERROR_LIMIT &&
           compareRect.x - cellRect.x1 < -ERROR_LIMIT
         ) {
-          // the left of selected boundary is inside this table cell
-          // colspan of this table cell will increase 1
           modifiedCells.push(cell)
         }
       }
@@ -646,7 +638,7 @@ class TableContainer extends Container {
     addAsideCells.forEach(cell => {
       const ref = isRight ? cell.next : cell
       const id = cellId()
-      const tableRow = cell.parent
+      const tableRow = cell.parent as TableRow
       const rId = tableRow.formats().row
       const cellFormats = cell.formats()
       const tableCell = this.scroll.create(
@@ -671,9 +663,8 @@ class TableContainer extends Container {
       affectedCells.push(tableCell)
     })
 
-    // insert new tableCol
     const tableCol = this.scroll.create(TableCol.blotName, true)
-    let colRef = isRight ? tableCols[colIndex].next : tableCols[colIndex]
+    const colRef = isRight ? tableCols[colIndex].next : tableCols[colIndex]
     if (colRef) {
       tableColGroup.insertBefore(tableCol, colRef)
     } else {
@@ -687,8 +678,8 @@ class TableContainer extends Container {
     })
 
     affectedCells.sort((cellA, cellB) => {
-      let y1 = cellA.domNode.getBoundingClientRect().y
-      let y2 = cellB.domNode.getBoundingClientRect().y
+      const y1 = cellA.domNode.getBoundingClientRect().y
+      const y2 = cellB.domNode.getBoundingClientRect().y
       return y1 - y2
     })
 
@@ -696,18 +687,18 @@ class TableContainer extends Container {
     return affectedCells
   }
 
-  insertRow(compareRect, isDown, editorWrapper) {
-    const [body] = this.descendants(TableBody)
+  insertRow(compareRect: any, isDown: boolean, editorWrapper: HTMLElement) {
+    const [body] = this.descendants(TableBody) as [TableBody]
     if (body == null || body.children.head == null) return
 
-    const tableCells = this.descendants(TableCell)
+    const tableCells = this.descendants(TableCell) as TableCell[]
     const rId = rowId()
     const newRow = this.scroll.create(TableRow.blotName, {
       row: rId,
-    })
-    let addBelowCells = []
-    let modifiedCells = []
-    let affectedCells = []
+    }) as TableRow
+    const addBelowCells: TableCell[] = []
+    const modifiedCells: TableCell[] = []
+    const affectedCells: TableCell[] = []
 
     tableCells.forEach(cell => {
       const cellRect = getRelativeRect(
@@ -736,11 +727,9 @@ class TableContainer extends Container {
       }
     })
 
-    // ordered table cells with rect.x, fix error for inserting
-    // new table cell in complicated table with wrong order.
-    const sortFunc = (cellA, cellB) => {
-      let x1 = cellA.domNode.getBoundingClientRect().x
-      let x2 = cellB.domNode.getBoundingClientRect().x
+    const sortFunc = (cellA: TableCell, cellB: TableCell) => {
+      const x1 = cellA.domNode.getBoundingClientRect().x
+      const x2 = cellB.domNode.getBoundingClientRect().x
       return x1 - x2
     }
     addBelowCells.sort(sortFunc)
@@ -751,12 +740,12 @@ class TableContainer extends Container {
 
       const tableCell = this.scroll.create(TableCell.blotName, Object.assign(
         {}, CELL_DEFAULT, { row: rId, colspan: cellFormats.colspan }
-      ))
+      )) as TableCell
       const cellLine = this.scroll.create(TableCellLine.blotName, {
         row: rId,
         cell: cId,
         colspan: cellFormats.colspan,
-      })
+      }) as TableCellLine
       const empty = this.scroll.create(Break.blotName)
       cellLine.appendChild(empty)
       tableCell.appendChild(cellLine)
@@ -770,8 +759,8 @@ class TableContainer extends Container {
       affectedCells.push(cell)
     })
 
-    const refRow = this.rows().find(row => {
-      let rowRect = getRelativeRect(
+    const refRow = this.rows().find((row: any) => {
+      const rowRect = getRelativeRect(
         row.domNode.getBoundingClientRect(),
         editorWrapper
       )
@@ -783,16 +772,20 @@ class TableContainer extends Container {
     })
     body.insertBefore(newRow, refRow)
 
-    // reordering affectedCells
     affectedCells.sort(sortFunc)
     return affectedCells
   }
 
-  mergeCells(compareRect, mergingCells, rowspan, colspan, editorWrapper) {
-    const mergedCell = mergingCells.reduce((result, tableCell, index) => {
+  mergeCells(compareRect: any, mergingCells: TableCell[], rowspan: number, colspan: number, editorWrapper: HTMLElement) {
+    const mergedCell = mergingCells.reduce((result: TableCell | null, tableCell: TableCell, index: number) => {
       if (index !== 0) {
-        result && tableCell.moveChildren(result)
-        tableCell.remove()
+        // Safe check: ensure moveChildren exists before calling
+        if (result && typeof tableCell.moveChildren === 'function') {
+          tableCell.moveChildren(result)
+        }
+        if (typeof tableCell.remove === 'function') {
+          tableCell.remove()
+        }
       } else {
         tableCell.format('colspan', colspan)
         tableCell.format('rowspan', rowspan)
@@ -802,11 +795,13 @@ class TableContainer extends Container {
       return result
     }, null)
 
-    let rowId = mergedCell.domNode.getAttribute('data-row')
-    let cellId = mergedCell.children.head.domNode.getAttribute('data-cell')
-    mergedCell.children.forEach(cellLine => {
-      cellLine.format('cell', cellId)
-      cellLine.format('row', rowId)
+    if (!mergedCell) return null
+
+    const rowIdAttr = mergedCell.domNode.getAttribute('data-row')
+    const cellIdAttr = (mergedCell.children as any).head.domNode.getAttribute('data-cell')
+    mergedCell.children.forEach((cellLine: any) => {
+      cellLine.format('cell', cellIdAttr)
+      cellLine.format('row', rowIdAttr)
       cellLine.format('colspan', colspan)
       cellLine.format('rowspan', rowspan)
     })
@@ -814,19 +809,19 @@ class TableContainer extends Container {
     return mergedCell
   }
 
-  unmergeCells(unmergingCells, editorWrapper) {
-    let cellFormats = {}
+  unmergeCells(unmergingCells: TableCell[], editorWrapper: HTMLElement) {
+    let cellFormats: Record<string, any> = {}
     let cellRowspan = 1
     let cellColspan = 1
 
     unmergingCells.forEach(tableCell => {
       cellFormats = tableCell.formats()
-      cellRowspan = cellFormats.rowspan
-      cellColspan = cellFormats.colspan
+      cellRowspan = parseInt(cellFormats.rowspan, 10) || 1
+      cellColspan = parseInt(cellFormats.colspan, 10) || 1
 
       if (cellColspan > 1) {
         let ref = tableCell.next
-        let row = tableCell.row()
+        const row = tableCell.row() as TableRow
         tableCell.format('colspan', 1)
         for (let i = cellColspan; i > 1; i--) {
           this.insertCell(row, ref)
@@ -835,15 +830,15 @@ class TableContainer extends Container {
 
       if (cellRowspan > 1) {
         let i = cellRowspan
-        let nextRow = tableCell.row().next
+        let nextRow = (tableCell.row() as TableRow).next
         while (i > 1) {
-          let refInNextRow = nextRow.children
-            .reduce((result, cell) => {
-              let compareRect = getRelativeRect(
+          const refInNextRow = nextRow.children
+            .reduce((result: any, cell: any) => {
+              const compareRect = getRelativeRect(
                 tableCell.domNode.getBoundingClientRect(),
                 editorWrapper
               )
-              let cellRect = getRelativeRect(
+              const cellRect = getRelativeRect(
                 cell.domNode.getBoundingClientRect(),
                 editorWrapper
               )
@@ -853,7 +848,7 @@ class TableContainer extends Container {
               return result
             }, null)
 
-          for (let i = cellColspan; i > 0; i--) {
+          for (let j = cellColspan; j > 0; j--) {
             this.insertCell(nextRow, refInNextRow)
           }
 
@@ -867,9 +862,9 @@ class TableContainer extends Container {
   }
 
   rows() {
-    const body = this.children.tail
+    const body = this.children.tail as TableBody | null
     if (body == null) return []
-    return body.children.map(row => row)
+    return body.children.map((row: any) => row)
   }
 }
 
@@ -878,13 +873,13 @@ TableContainer.className = "quill-better-table"
 TableContainer.tagName = "TABLE"
 
 class TableViewWrapper extends Container {
-  constructor(scroll, domNode) {
+  constructor(scroll: any, domNode: any) {
     super(scroll, domNode)
-    const quill = Quill.find(scroll.domNode.parentNode)
-    domNode.addEventListener('scroll', (e) => {
+    const quill = Quill.find(scroll.domNode.parentNode) as any
+    domNode.addEventListener('scroll', (e: Event) => {
       const tableModule = quill.getModule('better-table-plus')
       if (tableModule.columnTool) {
-        tableModule.columnTool.domNode.scrollLeft = e.target.scrollLeft
+        tableModule.columnTool.domNode.scrollLeft = (e.target as HTMLElement).scrollLeft
       }
 
       if (tableModule.tableSelection &&
@@ -923,7 +918,6 @@ TableColGroup.requiredContainer = TableContainer
 
 TableCol.requiredContainer = TableColGroup
 
-
 function rowId() {
   const id = Math.random()
     .toString(36)
@@ -939,7 +933,6 @@ function cellId() {
 }
 
 export {
-  // blots
   TableCol,
   TableColGroup,
   TableCellLine,
@@ -948,13 +941,8 @@ export {
   TableBody,
   TableContainer,
   TableViewWrapper,
-
-  // identity getters
   rowId,
   cellId,
-
-  // attributes
   CELL_IDENTITY_KEYS,
   CELL_ATTRIBUTES,
 }
-

@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "80dbc56523ef4aa861b8";
+/******/ 	var hotCurrentHash = "3419431aa117c2309550";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -946,23 +946,16 @@ __webpack_require__.r(__webpack_exports__);
 var external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_ = __webpack_require__(0);
 var external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default = /*#__PURE__*/__webpack_require__.n(external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_);
 
-// CONCATENATED MODULE: ./src/utils/index.js
+// CONCATENATED MODULE: ./src/utils/index.ts
 function css(domNode, rules) {
   if (typeof rules === 'object') {
-    for (let prop in rules) {
-      domNode.style[prop] = rules[prop];
+    for (const prop in rules) {
+      domNode.style[prop] = String(rules[prop]);
     }
   }
 }
-
-/**
- * getRelativeRect
- * @param  {Object} targetRect  rect data for target element
- * @param  {Element} container  container element
- * @return {Object}             an object with rect data
- */
 function getRelativeRect(targetRect, container) {
-  let containerRect = container.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
   return {
     x: targetRect.x - containerRect.x - container.scrollLeft,
     y: targetRect.y - containerRect.y - container.scrollTop,
@@ -972,13 +965,6 @@ function getRelativeRect(targetRect, container) {
     height: targetRect.height
   };
 }
-
-/**
- * _omit
- * @param  {Object} obj         target Object
- * @param  {Array} uselessKeys  keys of removed properties
- * @return {Object}             new Object without useless properties
- */
 function _omit(obj, uselessKeys) {
   return obj && Object.keys(obj).reduce((acc, key) => {
     return uselessKeys.includes(key) ? acc : Object.assign({}, acc, {
@@ -986,22 +972,9 @@ function _omit(obj, uselessKeys) {
     });
   }, {});
 }
-
-/**
- * getEventComposedPath
- *  compatibility fixed for Event.path/Event.composedPath
- *  Event.path is only for chrome/opera
- *  Event.composedPath is for Safari, FF
- *  Neither for Micro Edge
- * @param {Event} evt
- * @return {Array} an array of event.path
- */
 function getEventComposedPath(evt) {
   let path;
-  // chrome, opera, safari, firefox
   path = evt.path || evt.composedPath && evt.composedPath();
-
-  // other: edge
   if (path === undefined && evt.target) {
     path = [];
     let target = evt.target;
@@ -1011,24 +984,24 @@ function getEventComposedPath(evt) {
       path.push(target);
     }
   }
-  return path;
+  return path || [];
 }
 function convertToHex(rgb) {
   const reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
-  // if rgb
   if (/^(rgb|RGB)/.test(rgb)) {
     const color = rgb.toString().match(/\d+/g);
-    let hex = "#";
+    if (!color) return rgb;
+    let hex = '#';
     for (let i = 0; i < 3; i++) {
-      hex += ("0" + Number(color[i]).toString(16)).slice(-2);
+      hex += ('0' + Number(color[i]).toString(16)).slice(-2);
     }
     return hex;
   } else if (reg.test(rgb)) {
-    const aNum = rgb.replace(/#/, "").split("");
+    const aNum = rgb.replace(/#/, '').split('');
     if (aNum.length === 6) {
       return rgb;
     } else if (aNum.length === 3) {
-      let numHex = "#";
+      let numHex = '#';
       for (let index = 0; index < aNum.length; index += 1) {
         numHex += aNum[index] + aNum[index];
       }
@@ -1037,21 +1010,23 @@ function convertToHex(rgb) {
   }
   return rgb;
 }
-// CONCATENATED MODULE: ./src/contants/index.js
-const ERROR_LIMIT = 5;
-const COL_TOOL_HEIGHT = 12;
-const COL_TOOL_CELL_HEIGHT = 12;
-const ROW_TOOL_WIDTH = 12;
+// CONCATENATED MODULE: ./src/modules/table-column-tool.ts
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
 const CELL_MIN_WIDTH = 50;
+const COL_TOOL_CELL_HEIGHT = 12;
+const COL_TOOL_HEIGHT = 12;
 const PRIMARY_COLOR = '#35A7ED';
-
-// CONCATENATED MODULE: ./src/modules/table-column-tool.js
-
-
-
 class table_column_tool_TableColumnTool {
   constructor(table, quill, options) {
-    if (!table) return null;
+    _defineProperty(this, "table", void 0);
+    _defineProperty(this, "quill", void 0);
+    _defineProperty(this, "options", void 0);
+    _defineProperty(this, "domNode", null);
+    if (!table) return;
     this.table = table;
     this.quill = quill;
     this.options = options;
@@ -1087,23 +1062,23 @@ class table_column_tool_TableColumnTool {
     return toolCell;
   }
   updateToolCells() {
+    if (!this.domNode) return;
     const tableContainer = external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.find(this.table);
+    if (!tableContainer || !tableContainer.children) return;
     const CellsInFirstRow = tableContainer.children.tail.children.head.children;
     const tableCols = tableContainer.colGroup().children;
     const tableWidth = tableContainer.children.tail.domNode.clientWidth;
     const cellsNumber = computeCellsNumber(CellsInFirstRow);
-    let existCells = Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell'));
+    const existCells = Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell'));
     const totalCount = Math.max(cellsNumber, existCells.length);
     for (let index = 0; index < totalCount; index++) {
-      let col = tableCols.at(index);
-      let colWidth = col && col.attributes.domNode.clientWidth;
-      // if cell already exist
+      const col = tableCols.at(index);
+      const colWidth = col && col.domNode.clientWidth;
       let toolCell = null;
       if (!existCells[index]) {
         toolCell = this.createToolCell(index + 1 !== totalCount);
         this.domNode.appendChild(toolCell);
         this.addColCellHolderHandler(toolCell);
-        // set tool cell min-width
         const colWidthRate = (colWidth / tableWidth * 100).toFixed(2);
         css(toolCell, {
           'min-width': `${colWidthRate}%`
@@ -1113,8 +1088,6 @@ class table_column_tool_TableColumnTool {
       } else {
         toolCell = existCells[index];
         const colWidthRate = (colWidth / tableWidth * 100).toFixed(2);
-
-        // set tool cell min-width
         css(toolCell, {
           'min-width': `${colWidthRate}%`
         });
@@ -1122,21 +1095,24 @@ class table_column_tool_TableColumnTool {
     }
   }
   destroy() {
-    this.domNode.remove();
+    if (this.domNode) {
+      this.domNode.remove();
+    }
     return null;
   }
   addColCellHolderHandler(cell) {
     const tableContainer = external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.find(this.table);
+    if (!tableContainer) return;
     const $holder = cell.querySelector(".qlbt-col-tool-cell-holder");
     let dragging = false;
     let x0 = 0;
     let x = 0;
     let delta = 0;
     let width0 = 0;
-    // helpLine relation varrible
     let tableRect = {};
     let cellRect = {};
     let $helpLine = null;
+    const self = this;
     const handleDrag = e => {
       e.preventDefault();
       if (dragging) {
@@ -1146,13 +1122,14 @@ class table_column_tool_TableColumnTool {
         } else {
           delta = CELL_MIN_WIDTH - width0;
         }
-        css($helpLine, {
-          'left': `${cellRect.left + cellRect.width - 1 + delta}px`
-        });
+        if ($helpLine) {
+          css($helpLine, {
+            'left': `${cellRect.left + cellRect.width - 1 + delta}px`
+          });
+        }
       }
     };
-    const handleMouseup = e => {
-      e.preventDefault();
+    const handleMouseup = () => {
       const existCells = Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell'));
       const colIndex = existCells.indexOf(cell);
       const colBlot = tableContainer.colGroup().children.at(colIndex);
@@ -1179,17 +1156,19 @@ class table_column_tool_TableColumnTool {
       document.removeEventListener('mouseup', handleMouseup, false);
       tableRect = {};
       cellRect = {};
-      $helpLine.remove();
-      $helpLine = null;
+      if ($helpLine) {
+        $helpLine.remove();
+        $helpLine = null;
+      }
       tableContainer.updateTableWidth();
-      const tableSelection = this.quill.getModule('better-table-plus').tableSelection;
-      tableSelection && tableSelection.clearSelection();
+      const tableSelection = self.quill.getModule('better-table-plus').tableSelection;
+      if (tableSelection) tableSelection.clearSelection();
       this.updateToolCells();
     };
     const handleMousedown = e => {
       document.addEventListener('mousemove', handleDrag, false);
       document.addEventListener('mouseup', handleMouseup, false);
-      tableRect = this.table.getBoundingClientRect();
+      tableRect = self.table.getBoundingClientRect();
       cellRect = cell.getBoundingClientRect();
       $helpLine = document.createElement('div');
       css($helpLine, {
@@ -1212,6 +1191,7 @@ class table_column_tool_TableColumnTool {
     }
   }
   colToolCells() {
+    if (!this.domNode) return [];
     return Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell'));
   }
 }
@@ -1222,7 +1202,7 @@ function computeCellsNumber(CellsInFirstRow) {
     return sum;
   }, 0);
 }
-// CONCATENATED MODULE: ./src/formats/header.js
+// CONCATENATED MODULE: ./src/formats/header.ts
 
 
 const Block = external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.import("blots/block");
@@ -1253,12 +1233,13 @@ class header_Header extends Block {
     }, formats);
   }
   format(name, value) {
+    const formats = header_Header.formats(this.domNode);
     const {
       row,
       cell,
       rowspan,
       colspan
-    } = header_Header.formats(this.domNode);
+    } = formats;
     if (name === header_Header.blotName) {
       if (value) {
         super.format(name, {
@@ -1285,11 +1266,12 @@ class header_Header extends Block {
     }
   }
   optimize(context) {
+    const formats = header_Header.formats(this.domNode);
     const {
-      row,
       rowspan,
       colspan
-    } = header_Header.formats(this.domNode);
+    } = formats;
+    const row = formats.row;
     if (row && !(this.parent instanceof TableCell)) {
       this.wrap(TableCell.blotName, {
         row,
@@ -1297,8 +1279,6 @@ class header_Header extends Block {
         rowspan
       });
     }
-
-    // ShadowBlot optimize
     this.enforceAllowedChildren();
     if (this.uiNode != null && this.uiNode !== this.domNode.firstChild) {
       this.domNode.insertBefore(this.uiNode, this.domNode.firstChild);
@@ -1307,20 +1287,24 @@ class header_Header extends Block {
       if (this.statics.defaultChild != null) {
         const child = this.scroll.create(this.statics.defaultChild.blotName);
         this.appendChild(child);
-        // TODO double check if necessary
-        // child.optimize(context);
       } else {
         this.remove();
       }
     }
-    // Block optimize
     this.cache = {};
   }
 }
 header_Header.blotName = 'header';
 header_Header.tagName = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
 /* harmony default export */ var header = (header_Header);
-// CONCATENATED MODULE: ./src/formats/table.js
+// CONCATENATED MODULE: ./src/contants/index.ts
+const ERROR_LIMIT = 5;
+const contants_COL_TOOL_HEIGHT = 12;
+const contants_COL_TOOL_CELL_HEIGHT = 12;
+const ROW_TOOL_WIDTH = 12;
+const contants_CELL_MIN_WIDTH = 50;
+const contants_PRIMARY_COLOR = '#35A7ED';
+// CONCATENATED MODULE: ./src/formats/table.ts
 
 
 
@@ -1342,7 +1326,7 @@ class TableCellLine extends table_Block {
   static create(value) {
     const node = super.create(value);
     CELL_IDENTITY_KEYS.forEach(key => {
-      let identityMaker = key === 'row' ? table_rowId : table_cellId;
+      const identityMaker = key === 'row' ? table_rowId : table_cellId;
       node.setAttribute(`data-${key}`, value[key] || identityMaker());
     });
     CELL_ATTRIBUTES.forEach(attrName => {
@@ -1377,12 +1361,13 @@ class TableCellLine extends table_Block {
       }
     } else if (name === 'header') {
       if (!value) return;
+      const formats = TableCellLine.formats(this.domNode);
       const {
         row,
         cell,
         rowspan,
         colspan
-      } = TableCellLine.formats(this.domNode);
+      } = formats;
       super.format(name, {
         value,
         row,
@@ -1395,8 +1380,6 @@ class TableCellLine extends table_Block {
     }
   }
   optimize(context) {
-    // cover shadowBlot's wrap call, pass params parentBlot initialize
-    // needed
     const rowId = this.domNode.getAttribute('data-row');
     const rowspan = this.domNode.getAttribute('data-rowspan');
     const colspan = this.domNode.getAttribute('data-colspan');
@@ -1559,23 +1542,19 @@ class TableRow extends Container {
     }, {});
   }
   optimize(context) {
-    // optimize function of ShadowBlot
     if (this.statics.requiredContainer && !(this.parent instanceof this.statics.requiredContainer)) {
       this.wrap(this.statics.requiredContainer.blotName);
     }
-
-    // optimize function of ParentBlot
-    // note: modified this optimize function because
-    // TableRow should not be removed when the length of its children was 0
     this.enforceAllowedChildren();
     if (this.uiNode != null && this.uiNode !== this.domNode.firstChild) {
       this.domNode.insertBefore(this.uiNode, this.domNode.firstChild);
     }
-
-    // optimize function of ContainerBlot
     if (this.children.length > 0 && this.next != null && this.checkMerge()) {
-      this.next.moveChildren(this);
-      this.next.remove();
+      const next = this.next;
+      if (next && next.moveChildren && next.children) {
+        next.moveChildren(this);
+        next.remove();
+      }
     }
   }
   rowOffset() {
@@ -1595,7 +1574,7 @@ TableBody.blotName = "table-body";
 TableBody.tagName = "TBODY";
 class TableCol extends table_Block {
   static create(value) {
-    let node = super.create(value);
+    const node = super.create(value);
     COL_ATTRIBUTES.forEach(attrName => {
       node.setAttribute(`${attrName}`, value[attrName] || COL_DEFAULT[attrName]);
     });
@@ -1633,8 +1612,8 @@ class TableColGroup extends Container {}
 TableColGroup.blotName = "table-col-group";
 TableColGroup.tagName = "colgroup";
 class table_TableContainer extends Container {
-  static create() {
-    return super.create();
+  static create(value) {
+    return super.create(value);
   }
   constructor(scroll, domNode) {
     super(scroll, domNode);
@@ -1645,16 +1624,11 @@ class table_TableContainer extends Container {
       const colGroup = this.colGroup();
       if (!colGroup) return;
       const tableWidth = this.domNode.clientWidth;
-
-      // 需要进行 100% 宽度格式化的场景
-      //    1. 全部列宽度都是非 % 结尾
-      //    2. 不全是 % 结尾
       colGroup.children.reduce((_, col) => {
         const colWidthRate = (col.domNode.clientWidth / tableWidth * 100).toFixed(2);
         col.formats(colWidthRate + "%");
         return null;
       });
-      // this.domNode.style.width = `100%`
     }, 0);
   }
   cells(column) {
@@ -1681,8 +1655,6 @@ class table_TableContainer extends Container {
       this.tableDestroy();
       return true;
     }
-
-    // remove the matches column tool cell
     delIndexes.forEach(delIndex => {
       this.colGroup().children.at(delIndexes[0]).remove();
     });
@@ -1691,7 +1663,6 @@ class table_TableContainer extends Container {
     });
     modifiedCells.forEach(cell => {
       const cellColspan = parseInt(cell.formats().colspan, 10);
-      // const cellWidth = parseInt(cell.formats().width, 10)
       cell.format('colspan', cellColspan - delIndexes.length);
     });
     this.updateTableWidth();
@@ -1701,12 +1672,9 @@ class table_TableContainer extends Container {
     if (body == null || body.children.head == null) return;
     const tableCells = this.descendants(TableCell);
     const tableRows = this.descendants(TableRow);
-    const removedCells = []; // cells to be removed
-    const modifiedCells = []; // cells to be modified
-    const fallCells = []; // cells to fall into next row
-
-    // compute rows to remove
-    // bugfix: #21 There will be a empty tr left if delete the last row of a table
+    const removedCells = [];
+    const modifiedCells = [];
+    const fallCells = [];
     const removedRows = tableRows.filter(row => {
       const rowRect = getRelativeRect(row.domNode.getBoundingClientRect(), editorWrapper);
       return rowRect.y > compareRect.y - ERROR_LIMIT && rowRect.y1 < compareRect.y1 + ERROR_LIMIT;
@@ -1726,17 +1694,13 @@ class table_TableContainer extends Container {
       this.tableDestroy();
       return;
     }
-
-    // compute length of removed rows
     const removedRowsLength = this.rows().reduce((sum, row) => {
-      let rowRect = getRelativeRect(row.domNode.getBoundingClientRect(), editorWrapper);
+      const rowRect = getRelativeRect(row.domNode.getBoundingClientRect(), editorWrapper);
       if (rowRect.y > compareRect.y - ERROR_LIMIT && rowRect.y1 < compareRect.y1 + ERROR_LIMIT) {
         sum += 1;
       }
       return sum;
     }, 0);
-
-    // it must excute before the table layout changed with other operation
     fallCells.forEach(cell => {
       const cellRect = getRelativeRect(cell.domNode.getBoundingClientRect(), editorWrapper);
       const nextRow = cell.parent.next;
@@ -1758,8 +1722,6 @@ class table_TableContainer extends Container {
       const cellRowspan = parseInt(cell.formats().rowspan, 10);
       cell.format("rowspan", cellRowspan - removedRowsLength);
     });
-
-    // remove selected rows
     removedRows.forEach(row => row.remove());
   }
   tableDestroy() {
@@ -1790,31 +1752,23 @@ class table_TableContainer extends Container {
     const [body] = this.descendants(TableBody);
     const [tableColGroup] = this.descendants(TableColGroup);
     const tableCols = this.descendants(TableCol);
-    let addAsideCells = [];
-    let modifiedCells = [];
-    let affectedCells = [];
+    const addAsideCells = [];
+    const modifiedCells = [];
+    const affectedCells = [];
     if (body == null || body.children.head == null) return;
     const tableCells = this.descendants(TableCell);
     tableCells.forEach(cell => {
       const cellRect = getRelativeRect(cell.domNode.getBoundingClientRect(), editorWrapper);
       if (isRight) {
         if (Math.abs(cellRect.x1 - compareRect.x1) < ERROR_LIMIT) {
-          // the right of selected boundary equal to the right of table cell,
-          // add a new table cell right aside this table cell
           addAsideCells.push(cell);
         } else if (compareRect.x1 - cellRect.x > ERROR_LIMIT && compareRect.x1 - cellRect.x1 < -ERROR_LIMIT) {
-          // the right of selected boundary is inside this table cell
-          // colspan of this table cell will increase 1
           modifiedCells.push(cell);
         }
       } else {
         if (Math.abs(cellRect.x - compareRect.x) < ERROR_LIMIT) {
-          // left of selected boundary equal to left of table cell,
-          // add a new table cell left aside this table cell
           addAsideCells.push(cell);
         } else if (compareRect.x - cellRect.x > ERROR_LIMIT && compareRect.x - cellRect.x1 < -ERROR_LIMIT) {
-          // the left of selected boundary is inside this table cell
-          // colspan of this table cell will increase 1
           modifiedCells.push(cell);
         }
       }
@@ -1842,10 +1796,8 @@ class table_TableContainer extends Container {
       }
       affectedCells.push(tableCell);
     });
-
-    // insert new tableCol
     const tableCol = this.scroll.create(TableCol.blotName, true);
-    let colRef = isRight ? tableCols[colIndex].next : tableCols[colIndex];
+    const colRef = isRight ? tableCols[colIndex].next : tableCols[colIndex];
     if (colRef) {
       tableColGroup.insertBefore(tableCol, colRef);
     } else {
@@ -1857,8 +1809,8 @@ class table_TableContainer extends Container {
       affectedCells.push(cell);
     });
     affectedCells.sort((cellA, cellB) => {
-      let y1 = cellA.domNode.getBoundingClientRect().y;
-      let y2 = cellB.domNode.getBoundingClientRect().y;
+      const y1 = cellA.domNode.getBoundingClientRect().y;
+      const y2 = cellB.domNode.getBoundingClientRect().y;
       return y1 - y2;
     });
     this.updateTableWidth();
@@ -1872,9 +1824,9 @@ class table_TableContainer extends Container {
     const newRow = this.scroll.create(TableRow.blotName, {
       row: rId
     });
-    let addBelowCells = [];
-    let modifiedCells = [];
-    let affectedCells = [];
+    const addBelowCells = [];
+    const modifiedCells = [];
+    const affectedCells = [];
     tableCells.forEach(cell => {
       const cellRect = getRelativeRect(cell.domNode.getBoundingClientRect(), editorWrapper);
       if (isDown) {
@@ -1891,12 +1843,9 @@ class table_TableContainer extends Container {
         }
       }
     });
-
-    // ordered table cells with rect.x, fix error for inserting
-    // new table cell in complicated table with wrong order.
     const sortFunc = (cellA, cellB) => {
-      let x1 = cellA.domNode.getBoundingClientRect().x;
-      let x2 = cellB.domNode.getBoundingClientRect().x;
+      const x1 = cellA.domNode.getBoundingClientRect().x;
+      const x2 = cellB.domNode.getBoundingClientRect().x;
       return x1 - x2;
     };
     addBelowCells.sort(sortFunc);
@@ -1924,7 +1873,7 @@ class table_TableContainer extends Container {
       affectedCells.push(cell);
     });
     const refRow = this.rows().find(row => {
-      let rowRect = getRelativeRect(row.domNode.getBoundingClientRect(), editorWrapper);
+      const rowRect = getRelativeRect(row.domNode.getBoundingClientRect(), editorWrapper);
       if (isDown) {
         return Math.abs(rowRect.y - compareRect.y - compareRect.height) < ERROR_LIMIT;
       } else {
@@ -1932,16 +1881,19 @@ class table_TableContainer extends Container {
       }
     });
     body.insertBefore(newRow, refRow);
-
-    // reordering affectedCells
     affectedCells.sort(sortFunc);
     return affectedCells;
   }
   mergeCells(compareRect, mergingCells, rowspan, colspan, editorWrapper) {
     const mergedCell = mergingCells.reduce((result, tableCell, index) => {
       if (index !== 0) {
-        result && tableCell.moveChildren(result);
-        tableCell.remove();
+        // Safe check: ensure moveChildren exists before calling
+        if (result && typeof tableCell.moveChildren === 'function') {
+          tableCell.moveChildren(result);
+        }
+        if (typeof tableCell.remove === 'function') {
+          tableCell.remove();
+        }
       } else {
         tableCell.format('colspan', colspan);
         tableCell.format('rowspan', rowspan);
@@ -1949,11 +1901,12 @@ class table_TableContainer extends Container {
       }
       return result;
     }, null);
-    let rowId = mergedCell.domNode.getAttribute('data-row');
-    let cellId = mergedCell.children.head.domNode.getAttribute('data-cell');
+    if (!mergedCell) return null;
+    const rowIdAttr = mergedCell.domNode.getAttribute('data-row');
+    const cellIdAttr = mergedCell.children.head.domNode.getAttribute('data-cell');
     mergedCell.children.forEach(cellLine => {
-      cellLine.format('cell', cellId);
-      cellLine.format('row', rowId);
+      cellLine.format('cell', cellIdAttr);
+      cellLine.format('row', rowIdAttr);
       cellLine.format('colspan', colspan);
       cellLine.format('rowspan', rowspan);
     });
@@ -1965,11 +1918,11 @@ class table_TableContainer extends Container {
     let cellColspan = 1;
     unmergingCells.forEach(tableCell => {
       cellFormats = tableCell.formats();
-      cellRowspan = cellFormats.rowspan;
-      cellColspan = cellFormats.colspan;
+      cellRowspan = parseInt(cellFormats.rowspan, 10) || 1;
+      cellColspan = parseInt(cellFormats.colspan, 10) || 1;
       if (cellColspan > 1) {
         let ref = tableCell.next;
-        let row = tableCell.row();
+        const row = tableCell.row();
         tableCell.format('colspan', 1);
         for (let i = cellColspan; i > 1; i--) {
           this.insertCell(row, ref);
@@ -1979,15 +1932,15 @@ class table_TableContainer extends Container {
         let i = cellRowspan;
         let nextRow = tableCell.row().next;
         while (i > 1) {
-          let refInNextRow = nextRow.children.reduce((result, cell) => {
-            let compareRect = getRelativeRect(tableCell.domNode.getBoundingClientRect(), editorWrapper);
-            let cellRect = getRelativeRect(cell.domNode.getBoundingClientRect(), editorWrapper);
+          const refInNextRow = nextRow.children.reduce((result, cell) => {
+            const compareRect = getRelativeRect(tableCell.domNode.getBoundingClientRect(), editorWrapper);
+            const cellRect = getRelativeRect(cell.domNode.getBoundingClientRect(), editorWrapper);
             if (Math.abs(compareRect.x1 - cellRect.x) < ERROR_LIMIT) {
               result = cell;
             }
             return result;
           }, null);
-          for (let i = cellColspan; i > 0; i--) {
+          for (let j = cellColspan; j > 0; j--) {
             this.insertCell(nextRow, refInNextRow);
           }
           i -= 1;
@@ -2049,7 +2002,10 @@ function table_cellId() {
   return `cell-${id}`;
 }
 
-// CONCATENATED MODULE: ./src/modules/table-selection.js
+// CONCATENATED MODULE: ./src/modules/table-selection.ts
+function table_selection_defineProperty(e, r, t) { return (r = table_selection_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function table_selection_toPropertyKey(t) { var i = table_selection_toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function table_selection_toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
 
@@ -2058,12 +2014,24 @@ const LINE_POSITIONS = ['left', 'right', 'top', 'bottom'];
 const table_selection_ERROR_LIMIT = 2;
 class table_selection_TableSelection {
   constructor(table, quill, options) {
-    if (!table) return null;
+    table_selection_defineProperty(this, "table", void 0);
+    table_selection_defineProperty(this, "quill", void 0);
+    table_selection_defineProperty(this, "options", void 0);
+    table_selection_defineProperty(this, "boundary", void 0);
+    table_selection_defineProperty(this, "selectedTds", void 0);
+    table_selection_defineProperty(this, "dragging", void 0);
+    table_selection_defineProperty(this, "selectingHandler", void 0);
+    table_selection_defineProperty(this, "clearSelectionHandler", void 0);
+    table_selection_defineProperty(this, "left", void 0);
+    table_selection_defineProperty(this, "right", void 0);
+    table_selection_defineProperty(this, "top", void 0);
+    table_selection_defineProperty(this, "bottom", void 0);
+    if (!table) return;
     this.table = table;
     this.quill = quill;
     this.options = options;
-    this.boundary = {}; // params for selected square
-    this.selectedTds = []; // array for selected table-cells
+    this.boundary = {};
+    this.selectedTds = [];
     this.dragging = false;
     this.selectingHandler = this.mouseDownHandler.bind(this);
     this.clearSelectionHandler = this.clearSelection.bind(this);
@@ -2072,23 +2040,22 @@ class table_selection_TableSelection {
     this.quill.on('text-change', this.clearSelectionHandler);
   }
   helpLinesInitial() {
-    let parent = this.quill.root.parentNode;
-    LINE_POSITIONS.forEach(direction => {
-      this[direction] = document.createElement('div');
-      this[direction].classList.add('qlbt-selection-line');
-      this[direction].classList.add('qlbt-selection-line-' + direction);
-      css(this[direction], {
+    const parent = this.quill.root.parentNode;
+    const self = this;
+    LINE_POSITIONS.forEach(function (direction) {
+      self[direction] = document.createElement('div');
+      self[direction].classList.add('qlbt-selection-line');
+      self[direction].classList.add('qlbt-selection-line-' + direction);
+      css(self[direction], {
         position: 'absolute',
         display: 'none',
         'background-color': table_selection_PRIMARY_COLOR
       });
-      parent.appendChild(this[direction]);
+      parent.appendChild(self[direction]);
     });
   }
   mouseDownHandler(e) {
     if (e.button !== 0 || !e.target.closest(".quill-better-table")) return;
-    this.quill.root.addEventListener('mousemove', mouseMoveHandler, false);
-    this.quill.root.addEventListener('mouseup', mouseUpHandler, false);
     const self = this;
     const startTd = e.target.closest('td[data-row]');
     const startTdRect = getRelativeRect(startTd.getBoundingClientRect(), this.quill.root.parentNode);
@@ -2105,33 +2072,35 @@ class table_selection_TableSelection {
       self.correctBoundary();
       self.selectedTds = self.computeSelectedTds();
       self.repositionHelpLines();
-
-      // avoid select text in multiple table-cell
       if (startTd !== endTd) {
         self.quill.blur();
       }
     }
-    function mouseUpHandler(e) {
+    function mouseUpHandler() {
       self.quill.root.removeEventListener('mousemove', mouseMoveHandler, false);
       self.quill.root.removeEventListener('mouseup', mouseUpHandler, false);
       self.dragging = false;
     }
+    this.quill.root.addEventListener('mousemove', mouseMoveHandler, false);
+    this.quill.root.addEventListener('mouseup', mouseUpHandler, false);
   }
   correctBoundary() {
     const tableContainer = external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.find(this.table);
     const tableCells = tableContainer.descendants(TableCell);
-    tableCells.forEach(tableCell => {
-      let {
-        x,
-        y,
-        width,
-        height
-      } = getRelativeRect(tableCell.domNode.getBoundingClientRect(), this.quill.root.parentNode);
-      let isCellIntersected = (x + table_selection_ERROR_LIMIT >= this.boundary.x && x + table_selection_ERROR_LIMIT <= this.boundary.x1 || x - table_selection_ERROR_LIMIT + width >= this.boundary.x && x - table_selection_ERROR_LIMIT + width <= this.boundary.x1) && (y + table_selection_ERROR_LIMIT >= this.boundary.y && y + table_selection_ERROR_LIMIT <= this.boundary.y1 || y - table_selection_ERROR_LIMIT + height >= this.boundary.y && y - table_selection_ERROR_LIMIT + height <= this.boundary.y1);
+    const self = this;
+    tableCells.forEach(function (tableCell) {
+      const rect = getRelativeRect(tableCell.domNode.getBoundingClientRect(), self.quill.root.parentNode);
+      const x = rect.x;
+      const y = rect.y;
+      const width = rect.width;
+      const height = rect.height;
+      const isCellIntersected = (x + table_selection_ERROR_LIMIT >= (self.boundary.x || 0) && x + table_selection_ERROR_LIMIT <= (self.boundary.x1 || 0) || x - table_selection_ERROR_LIMIT + width >= (self.boundary.x || 0) && x - table_selection_ERROR_LIMIT + width <= (self.boundary.x1 || 0)) && (y + table_selection_ERROR_LIMIT >= (self.boundary.y || 0) && y + table_selection_ERROR_LIMIT <= (self.boundary.y1 || 0) || y - table_selection_ERROR_LIMIT + height >= (self.boundary.y || 0) && y - table_selection_ERROR_LIMIT + height <= (self.boundary.y1 || 0));
       if (isCellIntersected) {
-        this.boundary = computeBoundaryFromRects(this.boundary, {
+        self.boundary = computeBoundaryFromRects(self.boundary, {
           x,
           y,
+          x1: x + width,
+          y1: y + height,
           width,
           height
         });
@@ -2141,14 +2110,14 @@ class table_selection_TableSelection {
   computeSelectedTds() {
     const tableContainer = external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.find(this.table);
     const tableCells = tableContainer.descendants(TableCell);
+    const self = this;
     return tableCells.reduce((selectedCells, tableCell) => {
-      let {
-        x,
-        y,
-        width,
-        height
-      } = getRelativeRect(tableCell.domNode.getBoundingClientRect(), this.quill.root.parentNode);
-      let isCellIncluded = x + table_selection_ERROR_LIMIT >= this.boundary.x && x - table_selection_ERROR_LIMIT + width <= this.boundary.x1 && y + table_selection_ERROR_LIMIT >= this.boundary.y && y - table_selection_ERROR_LIMIT + height <= this.boundary.y1;
+      const rect = getRelativeRect(tableCell.domNode.getBoundingClientRect(), self.quill.root.parentNode);
+      const x = rect.x;
+      const y = rect.y;
+      const width = rect.width;
+      const height = rect.height;
+      const isCellIncluded = x + table_selection_ERROR_LIMIT >= (self.boundary.x || 0) && x - table_selection_ERROR_LIMIT + width <= (self.boundary.x1 || 0) && y + table_selection_ERROR_LIMIT >= (self.boundary.y || 0) && y - table_selection_ERROR_LIMIT + height <= (self.boundary.y1 || 0);
       if (isCellIncluded) {
         selectedCells.push(tableCell);
       }
@@ -2159,46 +2128,48 @@ class table_selection_TableSelection {
     const tableViewScrollLeft = this.table.parentNode.scrollLeft;
     css(this.left, {
       display: 'block',
-      left: `${this.boundary.x - tableViewScrollLeft - 1}px`,
-      top: `${this.boundary.y}px`,
-      height: `${this.boundary.height + 1}px`,
+      left: `${(this.boundary.x || 0) - tableViewScrollLeft - 1}px`,
+      top: `${this.boundary.y || 0}px`,
+      height: `${(this.boundary.height || 0) + 1}px`,
       width: '1px'
     });
     css(this.right, {
       display: 'block',
-      left: `${this.boundary.x1 - tableViewScrollLeft}px`,
-      top: `${this.boundary.y}px`,
-      height: `${this.boundary.height + 1}px`,
+      left: `${(this.boundary.x1 || 0) - tableViewScrollLeft}px`,
+      top: `${this.boundary.y || 0}px`,
+      height: `${(this.boundary.height || 0) + 1}px`,
       width: '1px'
     });
     css(this.top, {
       display: 'block',
-      left: `${this.boundary.x - 1 - tableViewScrollLeft}px`,
-      top: `${this.boundary.y}px`,
-      width: `${this.boundary.width + 1}px`,
+      left: `${(this.boundary.x || 0) - 1 - tableViewScrollLeft}px`,
+      top: `${this.boundary.y || 0}px`,
+      width: `${(this.boundary.width || 0) + 1}px`,
       height: '1px'
     });
     css(this.bottom, {
       display: 'block',
-      left: `${this.boundary.x - 1 - tableViewScrollLeft}px`,
-      top: `${this.boundary.y1 + 1}px`,
-      width: `${this.boundary.width + 1}px`,
+      left: `${(this.boundary.x || 0) - 1 - tableViewScrollLeft}px`,
+      top: `${(this.boundary.y1 || 0) + 1}px`,
+      width: `${(this.boundary.width || 0) + 1}px`,
       height: '1px'
     });
   }
-
-  // based on selectedTds compute positions of help lines
-  // It is useful when selectedTds are not changed
   refreshHelpLinesPosition() {
+    const self = this;
     const startRect = getRelativeRect(this.selectedTds[0].domNode.getBoundingClientRect(), this.quill.root.parentNode);
     const endRect = getRelativeRect(this.selectedTds[this.selectedTds.length - 1].domNode.getBoundingClientRect(), this.quill.root.parentNode);
     this.boundary = computeBoundaryFromRects(startRect, endRect);
     this.repositionHelpLines();
   }
   destroy() {
-    LINE_POSITIONS.forEach(direction => {
-      this[direction].remove();
-      this[direction] = null;
+    const self = this;
+    LINE_POSITIONS.forEach(function (direction) {
+      if (self[direction]) {
+        ;
+        self[direction].remove();
+        self[direction] = null;
+      }
     });
     this.quill.root.removeEventListener('mousedown', this.selectingHandler, false);
     this.quill.off('text-change', this.clearSelectionHandler);
@@ -2213,20 +2184,23 @@ class table_selection_TableSelection {
   clearSelection() {
     this.boundary = {};
     this.selectedTds = [];
-    LINE_POSITIONS.forEach(direction => {
-      this[direction] && css(this[direction], {
-        display: 'none'
-      });
+    const self = this;
+    LINE_POSITIONS.forEach(function (direction) {
+      if (self[direction]) {
+        css(self[direction], {
+          display: 'none'
+        });
+      }
     });
   }
 }
 function computeBoundaryFromRects(startRect, endRect) {
-  let x = Math.min(startRect.x, endRect.x, startRect.x + startRect.width - 1, endRect.x + endRect.width - 1);
-  let x1 = Math.max(startRect.x, endRect.x, startRect.x + startRect.width - 1, endRect.x + endRect.width - 1);
-  let y = Math.min(startRect.y, endRect.y, startRect.y + startRect.height - 1, endRect.y + endRect.height - 1);
-  let y1 = Math.max(startRect.y, endRect.y, startRect.y + startRect.height - 1, endRect.y + endRect.height - 1);
-  let width = x1 - x;
-  let height = y1 - y;
+  const x = Math.min(startRect.x, endRect.x, startRect.x + startRect.width - 1, endRect.x + endRect.width - 1);
+  const x1 = Math.max(startRect.x, endRect.x, startRect.x + startRect.width - 1, endRect.x + endRect.width - 1);
+  const y = Math.min(startRect.y, endRect.y, startRect.y + startRect.height - 1, endRect.y + endRect.height - 1);
+  const y1 = Math.max(startRect.y, endRect.y, startRect.y + startRect.height - 1, endRect.y + endRect.height - 1);
+  const width = x1 - x;
+  const height = y1 - y;
   return {
     x,
     x1,
@@ -2235,6 +2209,26 @@ function computeBoundaryFromRects(startRect, endRect) {
     width,
     height
   };
+}
+// CONCATENATED MODULE: ./src/utils/table-util.ts
+
+function getColToolCellIndexByBoundary(cells, boundary, conditionFn, container) {
+  return cells.reduce((findIndex, cell) => {
+    const cellRect = getRelativeRect(cell.getBoundingClientRect(), container);
+    if (conditionFn(cellRect, boundary)) {
+      findIndex = cells.indexOf(cell);
+    }
+    return findIndex;
+  }, -1);
+}
+function getColToolCellIndexesByBoundary(cells, boundary, conditionFn, container) {
+  return cells.reduce((findIndexes, cell) => {
+    const cellRect = getRelativeRect(cell.getBoundingClientRect(), container);
+    if (conditionFn(cellRect, boundary)) {
+      findIndexes.push(cells.indexOf(cell));
+    }
+    return findIndexes;
+  }, []);
 }
 // EXTERNAL MODULE: ./src/assets/icons/icon_operation_1.svg
 var icon_operation_1 = __webpack_require__(1);
@@ -2272,32 +2266,12 @@ var icon_operation_8_default = /*#__PURE__*/__webpack_require__.n(icon_operation
 var icon_operation_9 = __webpack_require__(9);
 var icon_operation_9_default = /*#__PURE__*/__webpack_require__.n(icon_operation_9);
 
-// CONCATENATED MODULE: ./src/utils/table-util.js
-
-function getColToolCellIndexByBoundary(cells, boundary, conditionFn, container) {
-  return cells.reduce((findIndex, cell) => {
-    let cellRect = getRelativeRect(cell.getBoundingClientRect(), container);
-    if (conditionFn(cellRect, boundary)) {
-      findIndex = cells.indexOf(cell);
-    }
-    return findIndex;
-  }, false);
-}
-function getColToolCellIndexesByBoundary(cells, boundary, conditionFn, container) {
-  return cells.reduce((findIndexes, cell) => {
-    let cellRect = getRelativeRect(cell.getBoundingClientRect(), container);
-    if (conditionFn(cellRect, boundary)) {
-      findIndexes.push(cells.indexOf(cell));
-    }
-    return findIndexes;
-  }, []);
-}
-
-// CONCATENATED MODULE: ./src/modules/table-operation-menu.js
+// CONCATENATED MODULE: ./src/modules/table-operation-menu.ts
+function table_operation_menu_defineProperty(e, r, t) { return (r = table_operation_menu_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function table_operation_menu_toPropertyKey(t) { var i = table_operation_menu_toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function table_operation_menu_toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
-
-// svg icons
 
 
 
@@ -2371,18 +2345,15 @@ const MENU_ITEMS_DEFAULT = {
     iconSrc: icon_operation_5_default.a,
     handler() {
       const tableContainer = external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.find(this.table);
-      // compute merged Cell rowspan, equal to length of selected rows
       const rowspan = tableContainer.rows().reduce((sum, row) => {
-        let rowRect = getRelativeRect(row.domNode.getBoundingClientRect(), this.quill.root.parentNode);
+        const rowRect = getRelativeRect(row.domNode.getBoundingClientRect(), this.quill.root.parentNode);
         if (rowRect.y > this.boundary.y - ERROR_LIMIT && rowRect.y + rowRect.height < this.boundary.y + this.boundary.height + ERROR_LIMIT) {
           sum += 1;
         }
         return sum;
       }, 0);
-
-      // compute merged cell colspan, equal to length of selected cols
       const colspan = this.columnToolCells.reduce((sum, cell) => {
-        let cellRect = getRelativeRect(cell.getBoundingClientRect(), this.quill.root.parentNode);
+        const cellRect = getRelativeRect(cell.getBoundingClientRect(), this.quill.root.parentNode);
         if (cellRect.x > this.boundary.x - ERROR_LIMIT && cellRect.x + cellRect.width < this.boundary.x + this.boundary.width + ERROR_LIMIT) {
           sum += 1;
         }
@@ -2411,8 +2382,9 @@ const MENU_ITEMS_DEFAULT = {
       let colIndexes = getColToolCellIndexesByBoundary(this.columnToolCells, this.boundary, (cellRect, boundary) => {
         return cellRect.x + ERROR_LIMIT > boundary.x && cellRect.x + cellRect.width - ERROR_LIMIT < boundary.x1;
       }, this.quill.root.parentNode);
-      let isDeleteTable = tableContainer.deleteColumns(this.boundary, colIndexes, this.quill.root.parentNode);
+      const isDeleteTable = tableContainer.deleteColumns(this.boundary, colIndexes, this.quill.root.parentNode);
       if (!isDeleteTable) {
+        ;
         this.tableColumnTool.updateToolCells();
         this.quill.update(external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.sources.USER);
         this.tableSelection.clearSelection();
@@ -2443,6 +2415,19 @@ const MENU_ITEMS_DEFAULT = {
 };
 class table_operation_menu_TableOperationMenu {
   constructor(params, quill, options) {
+    table_operation_menu_defineProperty(this, "tableSelection", void 0);
+    table_operation_menu_defineProperty(this, "table", void 0);
+    table_operation_menu_defineProperty(this, "quill", void 0);
+    table_operation_menu_defineProperty(this, "options", void 0);
+    table_operation_menu_defineProperty(this, "menuItems", void 0);
+    table_operation_menu_defineProperty(this, "tableColumnTool", void 0);
+    table_operation_menu_defineProperty(this, "boundary", void 0);
+    table_operation_menu_defineProperty(this, "selectedTds", void 0);
+    table_operation_menu_defineProperty(this, "destroyHandler", void 0);
+    table_operation_menu_defineProperty(this, "columnToolCells", void 0);
+    table_operation_menu_defineProperty(this, "colorSubTitle", void 0);
+    table_operation_menu_defineProperty(this, "cellColors", void 0);
+    table_operation_menu_defineProperty(this, "domNode", void 0);
     const betterTableModule = quill.getModule('better-table-plus');
     this.tableSelection = betterTableModule.tableSelection;
     this.table = params.table;
@@ -2482,7 +2467,7 @@ class table_operation_menu_TableOperationMenu {
       'min-height': `${MENU_MIN_HEIGHT}px`,
       width: `${MENU_WIDTH}px`
     });
-    for (let name in this.menuItems) {
+    for (const name in this.menuItems) {
       if (this.menuItems[name]) {
         this.domNode.appendChild(this.menuItemCreator(Object.assign({}, MENU_ITEMS_DEFAULT[name], this.menuItems[name])));
         if (['insertRowDown', 'unmergeCells'].indexOf(name) > -1) {
@@ -2490,35 +2475,18 @@ class table_operation_menu_TableOperationMenu {
         }
       }
     }
-
-    // if colors option is false, disabled bg color
     if (this.options.color && this.options.color !== false) {
       this.domNode.appendChild(dividingCreator());
       this.domNode.appendChild(subTitleCreator(this.colorSubTitle));
       this.domNode.appendChild(this.colorsItemCreator(this.cellColors));
-    }
-
-    // create dividing line
-    function dividingCreator() {
-      const dividing = document.createElement('div');
-      dividing.classList.add('qlbt-operation-menu-dividing');
-      return dividing;
-    }
-
-    // create subtitle for menu
-    function subTitleCreator(title) {
-      const subTitle = document.createElement('div');
-      subTitle.classList.add('qlbt-operation-menu-subtitle');
-      subTitle.innerText = title;
-      return subTitle;
     }
   }
   colorsItemCreator(colors) {
     const self = this;
     const node = document.createElement('div');
     node.classList.add('qlbt-operation-color-picker');
-    colors.forEach(color => {
-      let colorBox = colorBoxCreator(color);
+    colors.forEach(function (color) {
+      const colorBox = colorBoxCreator(color);
       node.appendChild(colorBox);
     });
     function colorBoxCreator(color) {
@@ -2557,26 +2525,33 @@ class table_operation_menu_TableOperationMenu {
     return node;
   }
 }
-// CONCATENATED MODULE: ./src/utils/node-matchers.js
+function dividingCreator() {
+  const dividing = document.createElement('div');
+  dividing.classList.add('qlbt-operation-menu-dividing');
+  return dividing;
+}
+function subTitleCreator(title) {
+  const subTitle = document.createElement('div');
+  subTitle.classList.add('qlbt-operation-menu-subtitle');
+  subTitle.innerText = title;
+  return subTitle;
+}
+// CONCATENATED MODULE: ./src/utils/node-matchers.ts
 
-
-const Delta = external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.import('delta');
-
-// rebuild delta
 function matchTableCell(node, delta, scroll) {
+  const Delta = scroll.Delta || scroll.quill && scroll.quill.constructor.Delta || Object;
   const row = node.parentNode;
-  const table = row.parentNode.tagName === 'TABLE' ? row.parentNode : row.parentNode.parentNode;
+  const parentNode = row.parentNode;
+  const table = parentNode && parentNode.tagName === 'TABLE' ? parentNode : parentNode.parentNode;
   const rows = Array.from(table.querySelectorAll('tr'));
   const cells = Array.from(row.querySelectorAll('td'));
   const rowId = rows.indexOf(row) + 1;
   const cellId = cells.indexOf(node) + 1;
   const colspan = node.getAttribute('colspan') || false;
   const rowspan = node.getAttribute('rowspan') || false;
-  const cellBg = node.getAttribute('data-cell-bg') || node.style.backgroundColor; // The td from external table has no 'data-cell-bg' 
-
-  // bugfix: empty table cells copied from other place will be removed unexpectedly
+  const cellBg = node.getAttribute('data-cell-bg') || node.style.backgroundColor;
   if (delta.length() === 0) {
-    delta = new Delta().insert('\n', {
+    return new Delta().insert('\n', {
       'table-cell-line': {
         row: rowId,
         cell: cellId,
@@ -2584,12 +2559,11 @@ function matchTableCell(node, delta, scroll) {
         colspan
       }
     });
-    return delta;
   }
-  delta = delta.reduce((newDelta, op) => {
+  const processedDelta = delta.reduce((newDelta, op) => {
     if (op.insert && typeof op.insert === 'string') {
       const lines = [];
-      let insertStr = op.insert;
+      const insertStr = op.insert;
       let start = 0;
       for (let i = 0; i < op.insert.length; i++) {
         if (insertStr.charAt(i) === '\n') {
@@ -2605,18 +2579,22 @@ function matchTableCell(node, delta, scroll) {
       const tailStr = insertStr.substring(start);
       if (tailStr) lines.push(tailStr);
       lines.forEach(text => {
-        text === '\n' ? newDelta.insert('\n', op.attributes) : newDelta.insert(text, _omit(op.attributes, ['table', 'table-cell-line']));
+        if (text === '\n') {
+          newDelta.insert('\n', op.attributes);
+        } else {
+          newDelta.insert(text, _omit(op.attributes || {}, ['table', 'table-cell-line']));
+        }
       });
     } else {
       newDelta.insert(op.insert, op.attributes);
     }
     return newDelta;
   }, new Delta());
-  return delta.reduce((newDelta, op) => {
+  return processedDelta.reduce((newDelta, op) => {
     if (op.insert && typeof op.insert === 'string' && op.insert.startsWith('\n')) {
       newDelta.insert(op.insert, Object.assign({}, Object.assign({}, {
         row: rowId
-      }, op.attributes.table), {
+      }, op.attributes && op.attributes.table), {
         'table-cell-line': {
           row: rowId,
           cell: cellId,
@@ -2624,34 +2602,30 @@ function matchTableCell(node, delta, scroll) {
           colspan,
           'cell-bg': cellBg
         }
-      }, _omit(op.attributes, ['table'])));
+      }, _omit(op.attributes || {}, ['table'])));
     } else {
-      // bugfix: remove background attr from the delta of table cell
-      //         to prevent unexcepted background attr append.
       if (op.attributes && op.attributes.background && op.attributes.background === convertToHex(cellBg)) {
         newDelta.insert(op.insert, Object.assign({}, _omit(op.attributes, ['table', 'table-cell-line', 'background'])));
       } else {
-        newDelta.insert(op.insert, Object.assign({}, _omit(op.attributes, ['table', 'table-cell-line'])));
+        newDelta.insert(op.insert, Object.assign({}, _omit(op.attributes || {}, ['table', 'table-cell-line'])));
       }
     }
     return newDelta;
   }, new Delta());
 }
-
-// replace th tag with td tag
 function matchTableHeader(node, delta, scroll) {
+  const Delta = scroll.Delta || scroll.quill && scroll.quill.constructor.Delta || Object;
   const row = node.parentNode;
-  const table = row.parentNode.tagName === 'TABLE' ? row.parentNode : row.parentNode.parentNode;
+  const parentNode = row.parentNode;
+  const table = parentNode && parentNode.tagName === 'TABLE' ? parentNode : parentNode.parentNode;
   const rows = Array.from(table.querySelectorAll('tr'));
   const cells = Array.from(row.querySelectorAll('th'));
   const rowId = rows.indexOf(row) + 1;
   const cellId = cells.indexOf(node) + 1;
   const colspan = node.getAttribute('colspan') || false;
   const rowspan = node.getAttribute('rowspan') || false;
-
-  // bugfix: empty table cells copied from other place will be removed unexpectedly
   if (delta.length() === 0) {
-    delta = new Delta().insert('\n', {
+    return new Delta().insert('\n', {
       'table-cell-line': {
         row: rowId,
         cell: cellId,
@@ -2659,12 +2633,11 @@ function matchTableHeader(node, delta, scroll) {
         colspan
       }
     });
-    return delta;
   }
-  delta = delta.reduce((newDelta, op) => {
+  const processedDelta = delta.reduce((newDelta, op) => {
     if (op.insert && typeof op.insert === 'string') {
       const lines = [];
-      let insertStr = op.insert;
+      const insertStr = op.insert;
       let start = 0;
       for (let i = 0; i < op.insert.length; i++) {
         if (insertStr.charAt(i) === '\n') {
@@ -2679,27 +2652,29 @@ function matchTableHeader(node, delta, scroll) {
       }
       const tailStr = insertStr.substring(start);
       if (tailStr) lines.push(tailStr);
-
-      // bugfix: no '\n' in op.insert, push a '\n' to lines
       if (lines.indexOf('\n') < 0) {
         lines.push('\n');
       }
       lines.forEach(text => {
-        text === '\n' ? newDelta.insert('\n', {
-          'table-cell-line': {
-            row: rowId,
-            cell: cellId,
-            rowspan,
-            colspan
-          }
-        }) : newDelta.insert(text, op.attributes);
+        if (text === '\n') {
+          newDelta.insert('\n', {
+            'table-cell-line': {
+              row: rowId,
+              cell: cellId,
+              rowspan,
+              colspan
+            }
+          });
+        } else {
+          newDelta.insert(text, op.attributes);
+        }
       });
     } else {
       newDelta.insert(op.insert, op.attributes);
     }
     return newDelta;
   }, new Delta());
-  return delta.reduce((newDelta, op) => {
+  return processedDelta.reduce((newDelta, op) => {
     if (op.insert && typeof op.insert === 'string' && op.insert.startsWith('\n')) {
       newDelta.insert(op.insert, Object.assign({}, {
         'table-cell-line': {
@@ -2710,30 +2685,22 @@ function matchTableHeader(node, delta, scroll) {
         }
       }));
     } else {
-      newDelta.insert(op.insert, Object.assign({}, _omit(op.attributes, ['table', 'table-cell-line'])));
+      newDelta.insert(op.insert, Object.assign({}, _omit(op.attributes || {}, ['table', 'table-cell-line'])));
     }
     return newDelta;
   }, new Delta());
 }
-
-// supplement colgroup and col
 function matchTable(node, delta, scroll) {
+  const Delta = scroll.Delta || scroll.quill && scroll.quill.constructor.Delta || Object;
   let newColDelta = new Delta();
   const topRow = node.querySelector('tr');
-
-  // bugfix: empty table will return empty delta
   if (topRow === null) return newColDelta;
   const cellsInTopRow = Array.from(topRow.querySelectorAll('td')).concat(Array.from(topRow.querySelectorAll('th')));
   const maxCellsNumber = cellsInTopRow.reduce((sum, cell) => {
     const cellColspan = cell.getAttribute('colspan') || 1;
-    sum = sum + parseInt(cellColspan, 10);
-    return sum;
+    return sum + parseInt(cellColspan, 10);
   }, 0);
   const colsNumber = node.querySelectorAll('col').length;
-
-  // issue #2
-  // bugfix: the table copied from Excel had some default col tags missing
-  //         add missing col tags
   if (colsNumber === maxCellsNumber) {
     return delta;
   } else {
@@ -2756,13 +2723,14 @@ function matchTable(node, delta, scroll) {
     }, new Delta());
   }
 }
-// CONCATENATED MODULE: ./src/quill-better-table-plus.js
+// CONCATENATED MODULE: ./src/quill-better-table-plus.ts
+function quill_better_table_plus_defineProperty(e, r, t) { return (r = quill_better_table_plus_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function quill_better_table_plus_toPropertyKey(t) { var i = quill_better_table_plus_toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function quill_better_table_plus_toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
 
 
-
-// import table node matchers
 
 
 
@@ -2780,38 +2748,31 @@ class quill_better_table_plus_BetterTablePlus extends Module {
     external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.register(TableBody, true);
     external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.register(table_TableContainer, true);
     external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.register(table_TableViewWrapper, true);
-    // register customized Header，overwriting quill built-in Header
-    // Quill.register('formats/header', Header, true);
   }
   constructor(quill, options) {
     super(quill, options);
-
-    // handle click on quill-better-table
+    quill_better_table_plus_defineProperty(this, "table", null);
+    quill_better_table_plus_defineProperty(this, "columnTool", null);
+    quill_better_table_plus_defineProperty(this, "tableSelection", null);
+    quill_better_table_plus_defineProperty(this, "tableOperationMenu", null);
+    const self = this;
     this.quill.root.addEventListener('click', evt => {
-      // bugfix: evt.path is undefined in Safari, FF, Micro Edge
       const path = getEventComposedPath(evt);
       if (!path || path.length <= 0) return;
       const tableNode = path.filter(node => {
         return node.tagName && node.tagName.toUpperCase() === 'TABLE' && node.classList.contains('quill-better-table');
       })[0];
       if (tableNode) {
-        // current table clicked
-        if (this.table === tableNode) return;
-        // other table clicked
-        if (this.table) this.hideTableTools();
-        this.showTableTools(tableNode, quill, options);
-      } else if (this.table) {
-        // other clicked
-        this.hideTableTools();
+        if (self.table === tableNode) return;
+        if (self.table) self.hideTableTools();
+        self.showTableTools(tableNode, quill, options);
+      } else if (self.table) {
+        self.hideTableTools();
       }
     }, false);
-
-    // handle right click on quill-better-table
     this.quill.root.addEventListener('contextmenu', evt => {
-      if (!this.table) return true;
+      if (!self.table) return true;
       evt.preventDefault();
-
-      // bugfix: evt.path is undefined in Safari, FF, Micro Edge
       const path = getEventComposedPath(evt);
       if (!path || path.length <= 0) return;
       const tableNode = path.filter(node => {
@@ -2823,13 +2784,16 @@ class quill_better_table_plus_BetterTablePlus extends Module {
       const cellNode = path.filter(node => {
         return node.tagName && node.tagName.toUpperCase() === 'TD' && node.getAttribute('data-row');
       })[0];
-      let isTargetCellSelected = this.tableSelection.selectedTds.map(tableCell => tableCell.domNode).includes(cellNode);
-      if (this.tableSelection.selectedTds.length <= 0 || !isTargetCellSelected) {
-        this.tableSelection.setSelection(cellNode.getBoundingClientRect(), cellNode.getBoundingClientRect());
+      if (!self.tableSelection) return;
+      const isTargetCellSelected = self.tableSelection.selectedTds.map(tableCell => tableCell.domNode).includes(cellNode);
+      if (self.tableSelection.selectedTds.length <= 0 || !isTargetCellSelected) {
+        if (cellNode) {
+          self.tableSelection.setSelection(cellNode.getBoundingClientRect(), cellNode.getBoundingClientRect());
+        }
       }
-      if (this.tableOperationMenu) this.tableOperationMenu = this.tableOperationMenu.destroy();
+      if (self.tableOperationMenu) self.tableOperationMenu = self.tableOperationMenu.destroy();
       if (tableNode) {
-        this.tableOperationMenu = new table_operation_menu_TableOperationMenu({
+        self.tableOperationMenu = new table_operation_menu_TableOperationMenu({
           table: tableNode,
           row: rowNode,
           cell: cellNode,
@@ -2838,10 +2802,8 @@ class quill_better_table_plus_BetterTablePlus extends Module {
         }, quill, options.operationMenu);
       }
     }, false);
-
-    // add keyboard binding：Backspace
-    // prevent user hits backspace to delete table cell
     const KeyBoard = quill.getModule('keyboard');
+    const self2 = this;
     quill.keyboard.addBinding({
       key: 'Backspace'
     }, {}, function (range, context) {
@@ -2855,20 +2817,11 @@ class quill_better_table_plus_BetterTablePlus extends Module {
       }
       return true;
     });
-    // since only one matched bindings callback will excute.
-    // expected my binding callback excute first
-    // I changed the order of binding callbacks
     let thisBinding = quill.keyboard.bindings.Backspace.pop();
     quill.keyboard.bindings.Backspace.splice(0, 1, thisBinding);
-
-    // add Matchers to match and render quill-better-table for initialization
-    // or pasting
     quill.clipboard.addMatcher('td', matchTableCell);
     quill.clipboard.addMatcher('th', matchTableHeader);
     quill.clipboard.addMatcher('table', matchTable);
-    // quill.clipboard.addMatcher('h1, h2, h3, h4, h5, h6', matchHeader)
-
-    // remove matcher for tr tag
     quill.clipboard.matchers = quill.clipboard.matchers.filter(matcher => {
       return matcher[0] !== 'tr';
     });
@@ -2889,30 +2842,27 @@ class quill_better_table_plus_BetterTablePlus extends Module {
     if (range == null) return;
     let currentBlot = this.quill.getLeaf(range.index)[0];
     if (isInTableCell(currentBlot)) {
-      // eslint-disable-next-line no-console
       console.warn(`Can not insert table into a table cell.`);
       return;
     }
     let delta = new quill_better_table_plus_Delta().retain(range.index);
     delta.insert('\n');
-    // insert table column
     delta = new Array(columns).fill('\n').reduce((memo, text) => {
       memo.insert(text, {
         'table-col': true
       });
       return memo;
     }, delta);
-    // insert table cell line with empty line
     delta = new Array(rows).fill(0).reduce(memo => {
-      let tableRowId = table_rowId();
-      return new Array(columns).fill('\n').reduce((memo, text) => {
-        memo.insert(text, {
+      const tableRowId = table_rowId();
+      return new Array(columns).fill('\n').reduce((memoInner, text) => {
+        memoInner.insert(text, {
           'table-cell-line': {
             row: tableRowId,
             cell: table_cellId()
           }
         });
-        return memo;
+        return memoInner;
       }, memo);
     }, delta);
     this.quill.updateContents(delta, external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.sources.USER);
@@ -2923,7 +2873,7 @@ class quill_better_table_plus_BetterTablePlus extends Module {
     const tableSelection = this.tableSelection;
     const tableColumnTool = this.columnTool;
     const columnToolCells = tableColumnTool.colToolCells();
-    let colIndex = getColToolCellIndexByBoundary(columnToolCells, tableSelection.boundary, (cellRect, boundary) => {
+    const colIndex = getColToolCellIndexByBoundary(columnToolCells, tableSelection.boundary, (cellRect, boundary) => {
       return Math.abs(cellRect.x + cellRect.width - boundary.x1) <= ERROR_LIMIT;
     }, tableSelection.quill.root.parentNode);
     const newColumn = tableContainer.insertColumn(tableSelection.boundary, colIndex, columnType === "right", tableSelection.quill.root.parentNode);
@@ -2964,10 +2914,10 @@ class quill_better_table_plus_BetterTablePlus extends Module {
     const tableSelection = this.tableSelection;
     const tableColumnTool = this.columnTool;
     const columnToolCells = tableColumnTool.colToolCells();
-    let colIndexes = getColToolCellIndexesByBoundary(columnToolCells, tableSelection.boundary, (cellRect, boundary) => {
+    const colIndexes = getColToolCellIndexesByBoundary(columnToolCells, tableSelection.boundary, (cellRect, boundary) => {
       return cellRect.x + ERROR_LIMIT > boundary.x && cellRect.x + cellRect.width - ERROR_LIMIT < boundary.x1;
     }, tableSelection.quill.root.parentNode);
-    let isDeleteTable = tableContainer.deleteColumns(tableSelection.boundary, colIndexes, tableSelection.quill.root.parentNode);
+    const isDeleteTable = tableContainer.deleteColumns(tableSelection.boundary, colIndexes, tableSelection.quill.root.parentNode);
     if (!isDeleteTable) {
       tableColumnTool.updateToolCells();
       tableSelection.quill.update(external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.sources.USER);
@@ -2984,9 +2934,9 @@ class quill_better_table_plus_BetterTablePlus extends Module {
     this.tableSelection = new table_selection_TableSelection(table, quill, options);
   }
   hideTableTools() {
-    this.columnTool && this.columnTool.destroy();
-    this.tableSelection && this.tableSelection.destroy();
-    this.tableOperationMenu && this.tableOperationMenu.destroy();
+    if (this.columnTool) this.columnTool.destroy();
+    if (this.tableSelection) this.tableSelection.destroy();
+    if (this.tableOperationMenu) this.tableOperationMenu.destroy();
     this.columnTool = null;
     this.tableSelection = null;
     this.tableOperationMenu = null;
@@ -3000,7 +2950,7 @@ quill_better_table_plus_BetterTablePlus.keyboardBindings = {
     collapsed: true,
     offset: 0,
     handler(range, context) {
-      const [line, offset] = this.quill.getLine(range.index);
+      const [line] = this.quill.getLine(range.index);
       return !(!line.prev || line.prev.statics.blotName !== 'table-cell-line');
     }
   },
@@ -3016,11 +2966,10 @@ quill_better_table_plus_BetterTablePlus.keyboardBindings = {
     shiftKey: null,
     format: ['table-cell-line'],
     handler(range, context) {
-      // bugfix: a unexpected new line inserted when user compositionend with hitting Enter
       if (this.quill.selection && this.quill.selection.composing) return;
       const Scope = external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.imports.parchment.Scope;
       if (range.length > 0) {
-        this.quill.scroll.deleteAt(range.index, range.length); // So we do not trigger text-change
+        this.quill.scroll.deleteAt(range.index, range.length);
       }
       const lineFormats = Object.keys(context.format).reduce((formats, format) => {
         if (this.quill.scroll.query(format, Scope.BLOCK) && !Array.isArray(context.format[format])) {
@@ -3028,10 +2977,7 @@ quill_better_table_plus_BetterTablePlus.keyboardBindings = {
         }
         return formats;
       }, {});
-      // insert new cellLine with lineFormats
       this.quill.insertText(range.index, '\n', lineFormats['table-cell-line'], external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.sources.USER);
-      // Earlier scroll.deleteAt might have messed up our selection,
-      // so insertText's built in selection preservation is not reliable
       this.quill.setSelection(range.index + 1, external_commonjs_quill_commonjs2_quill_amd_quill_root_Quill_default.a.sources.SILENT);
       this.quill.focus();
       Object.keys(context.format).forEach(name => {
@@ -3080,7 +3026,6 @@ function makeTableArrowHandler(up) {
     collapsed: true,
     format: ['table-cell-line'],
     handler(range, context) {
-      // TODO move to table module
       const key = up ? 'prev' : 'next';
       const targetLine = context.line[key];
       if (targetLine != null) return true;
@@ -3091,8 +3036,6 @@ function makeTableArrowHandler(up) {
         let totalColspanOfTargetCell = parseInt(targetCell.formats().colspan, 10);
         let cur = cell;
         let totalColspanOfCur = parseInt(cur.formats().colspan, 10);
-
-        // get targetCell above current cell depends on colspan
         while (cur.prev != null) {
           cur = cur.prev;
           totalColspanOfCur += parseInt(cur.formats().colspan, 10);

@@ -26,9 +26,11 @@
 
 # 安装
 
-你可以通过 npm 安装 `quill-better-table-plus`：
+你可以通过 pnpm 或 npm 安装 `quill-better-table-plus`：
 
 ```shell
+pnpm install quill-better-table-plus
+# 或
 npm install quill-better-table-plus
 ```
 
@@ -84,13 +86,31 @@ window.onload = () => {
 }
 ```
 
+## TypeScript 支持
+
+✅ **TypeScript 已完全支持** (v0.1.8+)
+
+本包使用 TypeScript 编写，提供完整的类型定义。
+
+```typescript
+import QuillBetterTablePlus, { TableOptions } from 'quill-better-table-plus'
+
+const options: TableOptions = {
+  operationMenu: {
+    items: {
+      unmergeCells: { text: 'Another unmerge cells name' }
+    }
+  }
+}
+```
+
 # 未来功能
 
 我们计划在未来的版本中添加以下功能来进一步增强 `quill-better-table-plus`：
 
 - [ ] **适配多种 `table` 格式**：支持多种直接复制粘贴的带样式的 `table` 数据，并且解析和渲染更优秀
 - [ ] **暴露更多的 `api`**：提供更多的 `api` 供开发者使用，以便快速应用不同的功能、外观和风格。
-- [ ] **`Typescript` 支持**
+- [x] **TypeScript 支持** - 已在 v0.1.8 完成
 
 我们正在努力开发这些功能，并将在未来的版本中逐步推出。敬请期待！
 
@@ -100,7 +120,7 @@ window.onload = () => {
 
 欢迎贡献代码和提交问题。如果你发现任何 bug，或者有任何改进建议，请创建一个 issue 或提交一个 pull 请求。
 
-> 开发注意：node 版本：`12.x`, 比如：`12.22.12`
+> 开发注意：node 版本：`14.x` 或更高版本
 
 # 许可证
 

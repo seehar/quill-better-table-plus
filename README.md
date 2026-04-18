@@ -31,9 +31,11 @@ environments and needs.
 
 # Install
 
-You can install `quill-better-table-plus` via npm:
+You can install `quill-better-table-plus` via pnpm or npm:
 
 ```shell
+pnpm install quill-better-table-plus
+# or
 npm install quill-better-table-plus
 ```
 
@@ -114,6 +116,24 @@ window.onload = () => {
 }
 ```
 
+## TypeScript Support
+
+✅ **TypeScript is fully supported** (v0.1.8+)
+
+This package is written in TypeScript and provides full type definitions.
+
+```typescript
+import QuillBetterTablePlus, { TableOptions } from 'quill-better-table-plus'
+
+const options: TableOptions = {
+  operationMenu: {
+    items: {
+      unmergeCells: { text: 'Another unmerge cells name' }
+    }
+  }
+}
+```
+
 # Future Functions
 
 We plan to further enhance `quill-better-table-plus` by adding the following features in a future release:
@@ -122,7 +142,7 @@ We plan to further enhance `quill-better-table-plus` by adding the following fea
   styles and better parsing and rendering.
 - [ ] **Expose more `api`**: Provide more `api` for developers to use in order to quickly apply different features,
   looks and styles.
-- [ ] **`Typescript` support**
+- [x] **`Typescript` support** - Completed in v0.1.8
 
 We are working hard on these features and will gradually roll them out in future releases. Stay tuned!
 

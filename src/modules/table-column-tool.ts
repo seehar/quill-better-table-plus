@@ -1,10 +1,22 @@
 import Quill from 'quill'
 import { css } from '../utils'
-import { CELL_MIN_WIDTH, COL_TOOL_CELL_HEIGHT, COL_TOOL_HEIGHT, PRIMARY_COLOR } from "src/contants";
+import { getColToolCellIndexByBoundary, getColToolCellIndexesByBoundary } from '../utils/table-util'
+import { ERROR_LIMIT } from "../contants"
+import type { TableContainer } from '../formats/table'
+
+const CELL_MIN_WIDTH = 50
+const COL_TOOL_CELL_HEIGHT = 12
+const COL_TOOL_HEIGHT = 12
+const PRIMARY_COLOR = '#35A7ED'
 
 export default class TableColumnTool {
-  constructor(table, quill, options) {
-    if (!table) return null
+  table!: HTMLElement
+  quill!: any
+  options!: any
+  domNode: HTMLDivElement | null = null
+
+  constructor(table: HTMLElement | null, quill: any, options: any) {
+    if (!table) return
     this.table = table
     this.quill = quill
     this.options = options
@@ -14,9 +26,9 @@ export default class TableColumnTool {
   }
 
   initColTool() {
-    const parent = this.quill.root.parentNode
+    const parent = this.quill.root.parentNode as HTMLElement
     const containerRect = parent.getBoundingClientRect()
-    const tableViewRect = this.table.parentNode.getBoundingClientRect()
+    const tableViewRect = ((this.table as HTMLElement).parentNode as HTMLElement).getBoundingClientRect()
 
     this.domNode = document.createElement('div')
     this.domNode.classList.add('qlbt-col-tool')
@@ -45,26 +57,27 @@ export default class TableColumnTool {
   }
 
   updateToolCells() {
-    const tableContainer = Quill.find(this.table)
-    const CellsInFirstRow = tableContainer.children.tail.children.head.children
+    if (!this.domNode) return
+
+    const tableContainer = Quill.find(this.table) as unknown as TableContainer
+    if (!tableContainer || !tableContainer.children) return
+    const CellsInFirstRow = (tableContainer.children.tail as any).children.head.children
     const tableCols = tableContainer.colGroup().children
 
-    const tableWidth = tableContainer.children.tail.domNode.clientWidth
+    const tableWidth = (tableContainer.children.tail as any).domNode.clientWidth
 
     const cellsNumber = computeCellsNumber(CellsInFirstRow)
-    let existCells = Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell'))
+    const existCells = Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell')) as HTMLDivElement[]
 
     const totalCount = Math.max(cellsNumber, existCells.length)
     for (let index = 0; index < totalCount; index++) {
-      let col = tableCols.at(index)
-      let colWidth = col && col.attributes.domNode.clientWidth
-      // if cell already exist
-      let toolCell = null
+      const col = tableCols.at(index) as any
+      const colWidth = col && col.domNode.clientWidth
+      let toolCell: HTMLDivElement | null = null
       if (!existCells[index]) {
         toolCell = this.createToolCell(index + 1 !== totalCount)
-        this.domNode.appendChild(toolCell)
+        this.domNode!.appendChild(toolCell)
         this.addColCellHolderHandler(toolCell)
-        // set tool cell min-width
         const colWidthRate = (colWidth / tableWidth * 100).toFixed(2)
         css(toolCell, {
           'min-width': `${colWidthRate}%`,
@@ -74,8 +87,6 @@ export default class TableColumnTool {
       } else {
         toolCell = existCells[index]
         const colWidthRate = (colWidth / tableWidth * 100).toFixed(2)
-
-        // set tool cell min-width
         css(toolCell, {
           'min-width': `${colWidthRate}%`,
         })
@@ -84,24 +95,28 @@ export default class TableColumnTool {
   }
 
   destroy() {
-    this.domNode.remove()
+    if (this.domNode) {
+      this.domNode.remove()
+    }
     return null
   }
 
-  addColCellHolderHandler(cell) {
-    const tableContainer = Quill.find(this.table)
-    const $holder = cell.querySelector(".qlbt-col-tool-cell-holder")
+  addColCellHolderHandler(cell: HTMLDivElement) {
+    const tableContainer = Quill.find(this.table) as unknown as TableContainer
+    if (!tableContainer) return
+    const $holder = cell.querySelector(".qlbt-col-tool-cell-holder") as HTMLDivElement
     let dragging = false
     let x0 = 0
     let x = 0
     let delta = 0
     let width0 = 0
-    // helpLine relation varrible
-    let tableRect = {}
-    let cellRect = {}
-    let $helpLine = null
+    let tableRect: DOMRect = {} as DOMRect
+    let cellRect: DOMRect = {} as DOMRect
+    let $helpLine: HTMLDivElement | null = null
 
-    const handleDrag = e => {
+    const self = this
+
+    const handleDrag = (e: MouseEvent) => {
       e.preventDefault()
 
       if (dragging) {
@@ -113,17 +128,18 @@ export default class TableColumnTool {
           delta = CELL_MIN_WIDTH - width0
         }
 
-        css($helpLine, {
-          'left': `${cellRect.left + cellRect.width - 1 + delta}px`,
-        })
+        if ($helpLine) {
+          css($helpLine, {
+            'left': `${cellRect.left + cellRect.width - 1 + delta}px`,
+          })
+        }
       }
     }
 
-    const handleMouseup = e => {
-      e.preventDefault()
-      const existCells = Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell'))
+    const handleMouseup = () => {
+      const existCells = Array.from(this.domNode!.querySelectorAll('.qlbt-col-tool-cell')) as HTMLDivElement[]
       const colIndex = existCells.indexOf(cell)
-      const colBlot = tableContainer.colGroup().children.at(colIndex)
+      const colBlot = tableContainer.colGroup().children.at(colIndex) as any
       const nextColBlot = colBlot.next
       const nextCell = nextColBlot.domNode
       const nextCellWidth = nextCell.clientWidth
@@ -132,7 +148,7 @@ export default class TableColumnTool {
         colBlot.format('width', width0 + delta)
         nextColBlot.format('width', nextCellWidth - delta)
         css(cell, { 'min-width': `${width0 + delta}px` })
-        css(nextCell, { 'min-width': `${nextCellWidth - delta}px` })
+        css(nextCell as HTMLElement, { 'min-width': `${nextCellWidth - delta}px` })
 
         x0 = 0
         x = 0
@@ -144,22 +160,24 @@ export default class TableColumnTool {
 
       document.removeEventListener('mousemove', handleDrag, false)
       document.removeEventListener('mouseup', handleMouseup, false)
-      tableRect = {}
-      cellRect = {}
-      $helpLine.remove()
-      $helpLine = null
+      tableRect = {} as DOMRect
+      cellRect = {} as DOMRect
+      if ($helpLine) {
+        $helpLine.remove()
+        $helpLine = null
+      }
       tableContainer.updateTableWidth()
 
-      const tableSelection = this.quill.getModule('better-table-plus').tableSelection
-      tableSelection && tableSelection.clearSelection()
+      const tableSelection = self.quill.getModule('better-table-plus').tableSelection
+      if (tableSelection) tableSelection.clearSelection()
       this.updateToolCells()
     }
 
-    const handleMousedown = e => {
+    const handleMousedown = (e: MouseEvent) => {
       document.addEventListener('mousemove', handleDrag, false)
       document.addEventListener('mouseup', handleMouseup, false)
 
-      tableRect = this.table.getBoundingClientRect()
+      tableRect = self.table.getBoundingClientRect()
       cellRect = cell.getBoundingClientRect()
       $helpLine = document.createElement('div')
       css($helpLine, {
@@ -184,12 +202,13 @@ export default class TableColumnTool {
   }
 
   colToolCells() {
-    return Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell'))
+    if (!this.domNode) return []
+    return Array.from(this.domNode.querySelectorAll('.qlbt-col-tool-cell')) as HTMLDivElement[]
   }
 }
 
-function computeCellsNumber(CellsInFirstRow) {
-  return CellsInFirstRow.reduce((sum, cell) => {
+function computeCellsNumber(CellsInFirstRow: any) {
+  return CellsInFirstRow.reduce((sum: number, cell: any) => {
     const cellColspan = cell.formats().colspan
     sum = sum + parseInt(cellColspan, 10)
     return sum

@@ -9,7 +9,7 @@ module.exports = (env, argv) => {
 
   if (env && env.minimize) {
     entry = {
-      'quill-better-table-plus.min.js': ['./src/quill-better-table-plus.js'],
+      'quill-better-table-plus.min.js': ['./src/quill-better-table-plus'],
     }
     minimize = true
     filename = '[name]'
@@ -22,7 +22,7 @@ module.exports = (env, argv) => {
     }
   } else if (env && env.format === 'esm') {
     entry = {
-      'quill-better-table-plus.esm.js': ['./src/quill-better-table-plus.js'],
+      'quill-better-table-plus.esm.js': ['./src/quill-better-table-plus'],
     }
     minimize = false
     filename = '[name]'
@@ -35,7 +35,7 @@ module.exports = (env, argv) => {
     }
   } else if (env && env.format === 'cjs') {
     entry = {
-      'quill-better-table-plus.cjs': ['./src/quill-better-table-plus.js'],
+      'quill-better-table-plus.cjs': ['./src/quill-better-table-plus'],
     }
     minimize = false
     filename = '[name]'
@@ -47,7 +47,7 @@ module.exports = (env, argv) => {
     }
   } else if (env && env.format === 'umd') {
     entry = {
-      'quill-better-table-plus.js': ['./src/quill-better-table-plus.js'],
+      'quill-better-table-plus.js': ['./src/quill-better-table-plus'],
     }
     minimize = false
     filename = '[name]'
@@ -60,7 +60,7 @@ module.exports = (env, argv) => {
     }
   } else {
     entry = {
-      'quill-better-table-plus.js': ['./src/quill-better-table-plus.js'],
+      'quill-better-table-plus.js': ['./src/quill-better-table-plus'],
       'quill-better-table-plus': './src/assets/quill-better-table-plus.less',
       'demo/demo.js': './demo/js/demo.js',
     }
@@ -89,7 +89,7 @@ module.exports = (env, argv) => {
         'src': path.resolve(__dirname, './src'),
         'dist': path.resolve(__dirname, './dist'),
       },
-      extensions: ['.js', '.less', '.html'],
+      extensions: ['.ts', '.js', '.less', '.html'],
     },
 
     externals: {
@@ -134,6 +134,34 @@ module.exports = (env, argv) => {
             'css-loader',
             'less-loader',
           ],
+        },
+
+        {
+          test: /\.ts$/,
+          exclude: /(node_modules|bower_components)/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['@babel/env', {
+                  targets: {
+                    browsers: [
+                      'last 2 Chrome major versions',
+                      'last 2 Firefox major versions',
+                      'last 2 Safari major versions',
+                      'last 2 Edge major versions',
+                      'last 2 iOS major versions',
+                      'last 2 ChromeAndroid major versions',
+                    ],
+                  },
+                }],
+                '@babel/preset-typescript',
+              ],
+              plugins: [
+                '@babel/plugin-proposal-class-properties',
+              ],
+            },
+          },
         },
 
         {
